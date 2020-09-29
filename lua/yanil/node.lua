@@ -7,6 +7,8 @@ local path_sep = utils.path_sep
 
 local get_devicon = vim.fn.WebDevIconsGetFileTypeSymbol
 
+local startswith = vim.startswith
+
 local Node = {
     name = "",
     abs_path = "",
@@ -17,6 +19,7 @@ function Node:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
+    self.__lt = Node.__lt
     o:init()
     return o
 end
@@ -25,6 +28,24 @@ function Node:init()
     if not self.ntype then
         error("cannot initialize abstract node")
     end
+end
+
+function Node:is_dir()
+    return self.ntype == "directory"
+end
+
+function Node:is_hidden()
+    return startswith(self.name, ".")
+end
+
+function Node:__lt(rhs)
+    if self:is_dir() and not rhs:is_dir() then return true end
+    if not self:is_dir() and rhs:is_dir() then return false end
+
+    if self:is_hidden() and not rhs:is_hidden() then return true end
+    if not self:is_hidden() and rhs:is_hidden() then return false end
+
+    return self.name < rhs.name
 end
 
 local DirNode = Node:new {
@@ -86,6 +107,8 @@ function DirNode:load()
         table.insert(self.entries, node)
     end
 
+    self:sort_entries()
+
     self.is_loaded = true
 end
 
@@ -119,6 +142,11 @@ function DirNode:get_nth_node(n)
         end
     end
     return iter(self.entries)
+end
+
+-- TODO: more sort options
+function DirNode:sort_entries(_opts)
+    table.sort(self.entries)
 end
 
 function DirNode:draw(opts, lines, highlights)
