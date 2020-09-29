@@ -33,13 +33,14 @@ M.tree = {
         'norelativenumber',
         'nonumber',
         'nolist',
+        'nobuflisted',
         'winfixwidth',
         'winfixheight',
         'nofoldenable',
         'nospell',
         'foldmethod=manual',
         'foldcolumn=0',
-        'signcolumn=no'
+        'signcolumn=yes:1'
     },
 }
 
@@ -94,13 +95,14 @@ function M.open_current_node()
     else
         node:open()
     end
-        local opts = {holder = "  "}
-        local lines, highlights = node:draw(opts)
-        api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
-        api.nvim_buf_set_lines(bufnr, linenr - 1, linenr, false, {})
-        for i, hl in ipairs(highlights) do
-            api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + i - 2, hl.col_start, hl.col_end)
-        end
+
+    local opts = {holder = "  "}
+    local lines, highlights = node:draw(opts)
+    api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
+    api.nvim_buf_set_lines(bufnr, linenr - 1, linenr, false, {})
+    for i, hl in ipairs(highlights) do
+        api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + i - 2, hl.col_start, hl.col_end)
+    end
 
     api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
@@ -146,16 +148,15 @@ end
 
 local function create_win()
     api.nvim_command("topleft vertical " .. M.tree.win_width .. " new")
-    api.nvim_command("setlocal winfixwidth")
+    api.nvim_command("setlocal nobuflisted")
 end
 
 function M.open()
     if M.tree.winnr() then return end
 
-    local bufnr = create_buf()
-    M.tree.bufnr = bufnr
+    M.tree.bufnr = create_buf()
     create_win()
-    api.nvim_win_set_buf(M.tree.winnr(), bufnr)
+    api.nvim_win_set_buf(M.tree.winnr(), M.tree.bufnr)
 
     for _, opt in ipairs(M.tree.options) do
         api.nvim_command("setlocal " .. opt)
