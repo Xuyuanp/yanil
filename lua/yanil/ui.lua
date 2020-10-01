@@ -6,11 +6,7 @@ local nodelib = require("yanil/node")
 
 local ns_id = api.nvim_create_namespace("Yanil")
 
-api.nvim_command([[hi default link YanilDirectory Green]])
-api.nvim_command([[hi default link YanilFile Normal]])
-api.nvim_command([[hi default link YanilFileExecutable Keyword]])
-api.nvim_command([[hi default link YanilLinkArrow Blue]])
-api.nvim_command([[hi default link YanilLinkTo Comment]])
+require("yanil/colors").setup()
 
 local M = {}
 

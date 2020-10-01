@@ -160,7 +160,7 @@ function DirNode:draw(opts, lines, highlights)
         line = #lines - 1,
         col_start = prefix:len(),
         col_end = display_str:len(),
-        hl_group = "YanilDirectory"
+        hl_group = "YanilTreeDirectory"
     })
     if self.is_open then
         for _, child in ipairs(self.entries) do
@@ -193,7 +193,7 @@ function FileNode:draw(opts, lines, highlights)
         line = #lines - 1,
         col_start = prefix:len(),
         col_end = display_str:len(),
-        hl_group = self.is_exec and "YanilFileExecutable" or "YanilFile"
+        hl_group = self.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile"
     })
 
     return lines, highlights
@@ -211,19 +211,19 @@ function LinkNode:draw(opts, lines, highlights)
         line = linenr,
         col_start = prefix:len(),
         col_end = prefix:len() + self.name:len(),
-        hl_group = "YanilFile",
+        hl_group = "YanilTreeFile",
     })
     table.insert(highlights, {
         line = linenr,
         col_start = prefix:len() + self.name:len() + 1,
         col_end = prefix:len() + self.name:len() + 3,
-        hl_group = "YanilLinkArrow",
+        hl_group = "YanilTreeLinkArrow",
     })
     table.insert(highlights, {
         line = linenr,
         col_start = prefix:len() + self.name:len() + 3,
         col_end = display_str:len(),
-        hl_group = "YanilLinkTo",
+        hl_group = "YanilTreeLinkTo",
     })
 
     return lines, highlights
