@@ -8,6 +8,48 @@ local ns_id = api.nvim_create_namespace("Yanil")
 
 require("yanil/colors").setup()
 
+local decorators = {
+    function(node)
+        if node:is_dir() then
+            local text = node.name .. "/"
+            return text, {
+                col_start = 0,
+                col_end = text:len(),
+                hl_group = "YanilTreeDirectory",
+            }
+        elseif node:is_link() then
+            local text = string.format("%s -> %s", node.name, node.link_to)
+            local name_len = node.name:len()
+            local hls = {
+                {
+                    col_start = 0,
+                    col_end = name_len,
+                    hl_group = "YanilTreeLink",
+                },
+                {
+                    col_start = name_len + 1,
+                    col_end = name_len + 3,
+                    hl_group = "YanilTreeLinkArrow",
+                },
+                {
+                    col_start = name_len + 3,
+                    col_end = text:len(),
+                    hl_group = "YanilTreeLinkTo",
+                },
+            }
+            return text, hls
+        else
+            local text = node.name
+            local hls = {
+                col_start = 0,
+                col_end = text:len(),
+                hl_group = node.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile",
+            }
+            return text, hls
+        end
+    end,
+}
+
 local M = {}
 
 M.tree = {
@@ -76,7 +118,7 @@ function M.open_current_node()
     local node = M.get_node_by_linenr(linenr)
     if not node then return end
 
-    if node.ntype ~= "directory" then
+    if not node:is_dir() then
         api.nvim_command("wincmd p")
         api.nvim_command("e " .. node.abs_path)
         return
@@ -92,12 +134,12 @@ function M.open_current_node()
         node:open()
     end
 
-    local opts = {holder = "  "}
+    local opts = {holder = "  ", decorators = decorators}
     local lines, highlights = node:draw(opts)
     api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
     api.nvim_buf_set_lines(bufnr, linenr - 1, linenr, false, {})
-    for i, hl in ipairs(highlights) do
-        api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + i - 2, hl.col_start, hl.col_end)
+    for _, hl in ipairs(highlights) do
+        api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + hl.line - 1, hl.col_start, hl.col_end)
     end
 
     api.nvim_buf_set_option(bufnr, "modifiable", false)
@@ -160,7 +202,10 @@ function M.open()
 end
 
 function M.draw()
-    local opts = {holder = "  "}
+    local opts = {
+        holder = "  ",
+        decorators = decorators,
+    }
 
     local lines, highlights = M.tree.root:draw(opts, {"", ""})
 

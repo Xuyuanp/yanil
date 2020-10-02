@@ -1,4 +1,5 @@
 local vim = vim
+local validate = vim.validate
 local api = vim.api
 local loop = vim.loop
 
@@ -36,6 +37,10 @@ end
 
 function Node:is_hidden()
     return startswith(self.name, ".")
+end
+
+function Node:is_link()
+    return self.ntype == "link"
 end
 
 function Node:__lt(rhs)
@@ -98,6 +103,7 @@ function DirNode:load()
         local name, ft = loop.fs_scandir_next(handle)
         if not name then break end
 
+        -- TODO: socket
         local node = classes[ft]:new {
             name = name,
             abs_path = self.abs_path .. path_sep .. name,
@@ -149,25 +155,49 @@ function DirNode:sort_entries(_opts)
     table.sort(self.entries)
 end
 
-function DirNode:draw(opts, lines, highlights)
+function Node:draw(opts, lines, highlights)
+    validate {
+        opts = {opts, "t", false},
+        lines = {lines, "t", true},
+        highlights = {highlights, "t", true},
+    }
     lines = lines or {}
     highlights = highlights or {}
 
     local prefix = string.rep(opts.holder or " ", self.depth)
-    local display_str = string.format("%s%s %s/", prefix, self.is_open and "" or "", self.name)
+
+    local symbols = { prefix }
+    local line = #lines
+    local hl_offset = prefix:len()
+    for _, decorator in ipairs(opts.decorators or {}) do
+        local text, hls = decorator(self)
+        if text then
+            table.insert(symbols, text)
+            if not vim.tbl_islist(hls) then hls = {hls} end
+            for _, hl in ipairs(hls or {}) do
+                table.insert(highlights, {
+                    line      = line,
+                    col_start = hl_offset + hl.col_start,
+                    col_end   = hl_offset + hl.col_end,
+                    hl_group  = hl.hl_group,
+                })
+            end
+            hl_offset = hl_offset + text:len()
+        end
+    end
+    local display_str = vim.fn.join(symbols, "")
     table.insert(lines, display_str)
-    table.insert(highlights, {
-        line = #lines - 1,
-        col_start = prefix:len(),
-        col_end = display_str:len(),
-        hl_group = "YanilTreeDirectory"
-    })
+
+    return lines, highlights
+end
+
+function DirNode:draw(opts, lines, highlights)
+    lines, highlights = Node.draw(self, opts, lines, highlights)
     if self.is_open then
         for _, child in ipairs(self.entries) do
             child:draw(opts, lines, highlights)
         end
     end
-
     return lines, highlights
 end
 
@@ -180,53 +210,6 @@ function DirNode:total_lines()
         end
     end
     return count
-end
-
-function FileNode:draw(opts, lines, highlights)
-    lines = lines or {}
-    highlights = highlights or {}
-
-    local prefix = string.rep(opts.holder or " ", self.depth)
-    local display_str = string.format("%s%s %s%s", prefix, get_devicon(self.name), self.name, self.is_exec and "*" or "")
-    table.insert(lines, display_str)
-    table.insert(highlights, {
-        line = #lines - 1,
-        col_start = prefix:len(),
-        col_end = display_str:len(),
-        hl_group = self.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile"
-    })
-
-    return lines, highlights
-end
-
-function LinkNode:draw(opts, lines, highlights)
-    lines = lines or {}
-    highlights = highlights or {}
-    local prefix = string.rep(opts.holder or " ", self.depth)
-    local display_str = string.format("%s%s %s -> %s", prefix, get_devicon(self.name), self.name, self.link_to)
-    table.insert(lines, display_str)
-
-    local linenr = #lines - 1
-    table.insert(highlights, {
-        line = linenr,
-        col_start = prefix:len(),
-        col_end = prefix:len() + self.name:len(),
-        hl_group = "YanilTreeFile",
-    })
-    table.insert(highlights, {
-        line = linenr,
-        col_start = prefix:len() + self.name:len() + 1,
-        col_end = prefix:len() + self.name:len() + 3,
-        hl_group = "YanilTreeLinkArrow",
-    })
-    table.insert(highlights, {
-        line = linenr,
-        col_start = prefix:len() + self.name:len() + 3,
-        col_end = display_str:len(),
-        hl_group = "YanilTreeLinkTo",
-    })
-
-    return lines, highlights
 end
 
 return {
