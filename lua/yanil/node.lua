@@ -6,8 +6,6 @@ local loop = vim.loop
 local utils = require("yanil/utils")
 local path_sep = utils.path_sep
 
-local get_devicon = vim.fn.WebDevIconsGetFileTypeSymbol
-
 local startswith = vim.startswith
 
 local Node = {
@@ -164,17 +162,16 @@ function Node:draw(opts, lines, highlights)
     lines = lines or {}
     highlights = highlights or {}
 
-    local prefix = string.rep(opts.holder or " ", self.depth)
-
-    local symbols = { prefix }
+    local symbols = { }
     local line = #lines
-    local hl_offset = prefix:len()
+    local hl_offset = 0
     for _, decorator in ipairs(opts.decorators or {}) do
         local text, hls = decorator(self)
         if text then
             table.insert(symbols, text)
+            hls = hls or {}
             if not vim.tbl_islist(hls) then hls = {hls} end
-            for _, hl in ipairs(hls or {}) do
+            for _, hl in ipairs(hls) do
                 table.insert(highlights, {
                     line      = line,
                     col_start = hl_offset + hl.col_start,

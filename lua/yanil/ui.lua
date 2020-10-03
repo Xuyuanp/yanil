@@ -3,52 +3,11 @@ local api = vim.api
 local loop = vim.loop
 
 local nodelib = require("yanil/node")
+local decorators = require("yanil/decorators")
 
 local ns_id = api.nvim_create_namespace("Yanil")
 
 require("yanil/colors").setup()
-
-local decorators = {
-    function(node)
-        if node:is_dir() then
-            local text = node.name .. "/"
-            return text, {
-                col_start = 0,
-                col_end = text:len(),
-                hl_group = "YanilTreeDirectory",
-            }
-        elseif node:is_link() then
-            local text = string.format("%s -> %s", node.name, node.link_to)
-            local name_len = node.name:len()
-            local hls = {
-                {
-                    col_start = 0,
-                    col_end = name_len,
-                    hl_group = "YanilTreeLink",
-                },
-                {
-                    col_start = name_len + 1,
-                    col_end = name_len + 3,
-                    hl_group = "YanilTreeLinkArrow",
-                },
-                {
-                    col_start = name_len + 3,
-                    col_end = text:len(),
-                    hl_group = "YanilTreeLinkTo",
-                },
-            }
-            return text, hls
-        else
-            local text = node.name
-            local hls = {
-                col_start = 0,
-                col_end = text:len(),
-                hl_group = node.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile",
-            }
-            return text, hls
-        end
-    end,
-}
 
 local M = {}
 
@@ -79,6 +38,13 @@ M.tree = {
         'foldmethod=manual',
         'foldcolumn=0',
         'signcolumn=yes:1'
+    },
+    draw_opts = {
+        decorators = {
+            decorators.indent,
+            decorators.devicons,
+            decorators.default,
+        },
     },
 }
 
@@ -134,8 +100,7 @@ function M.open_current_node()
         node:open()
     end
 
-    local opts = {holder = "  ", decorators = decorators}
-    local lines, highlights = node:draw(opts)
+    local lines, highlights = node:draw(M.tree.draw_opts)
     api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
     api.nvim_buf_set_lines(bufnr, linenr - 1, linenr, false, {})
     for _, hl in ipairs(highlights) do
@@ -202,12 +167,7 @@ function M.open()
 end
 
 function M.draw()
-    local opts = {
-        holder = "  ",
-        decorators = decorators,
-    }
-
-    local lines, highlights = M.tree.root:draw(opts, {"", ""})
+    local lines, highlights = M.tree.root:draw(M.tree.draw_opts, {"", ""})
 
     api.nvim_buf_set_option(M.tree.bufnr, "modifiable", true)
     api.nvim_buf_set_lines(M.tree.bufnr, 0, -1, false, {})
