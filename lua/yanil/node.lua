@@ -142,22 +142,27 @@ function DirNode:toggle()
     end
 end
 
-function DirNode:get_nth_node(n)
-    if n == 0 then return self end
-
-    local index = 1
-    local function iter(entries)
-        for _, child in ipairs(entries) do
-            if index == n then return child end
-
-            index = index + 1
-            if child:is_dir() and child.is_open then
-                child = iter(child.entries)
-                if child then return child end
+function DirNode:iter()
+    local nodes = { self }
+    return function()
+        if vim.tbl_isempty(nodes) then return end
+        local index = #nodes
+        local current_node = table.remove(nodes, index)
+        if current_node:is_dir() and current_node.is_open then
+            for _, child in ipairs(current_node.entries) do
+                table.insert(nodes, index, child)
             end
         end
+        return current_node
     end
-    return iter(self.entries)
+end
+
+function DirNode:get_nth_node(n)
+    local index = 0
+    for node in self:iter() do
+        if index == n then return node end
+        index = index + 1
+    end
 end
 
 -- TODO: more sort options
