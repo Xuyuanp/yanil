@@ -13,7 +13,7 @@ function M.default(node)
         return text, {
             col_start = 0,
             col_end = text:len(),
-            hl_group = "YanilTreeDirectory",
+            hl_group = node.parent and "YanilTreeDirectory" or "YanilTreeRoot",
         }
     end
 
