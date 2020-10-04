@@ -15,36 +15,34 @@ function M.default(node)
             col_end = text:len(),
             hl_group = "YanilTreeDirectory",
         }
-    elseif node:is_link() then
-        local text = string.format("%s -> %s", node.name, node.link_to)
-        local name_len = node.name:len()
-        local hls = {
-            {
-                col_start = 0,
-                col_end = name_len,
-                hl_group = "YanilTreeLink",
-            },
-            {
-                col_start = name_len + 1,
-                col_end = name_len + 3,
-                hl_group = "YanilTreeLinkArrow",
-            },
-            {
-                col_start = name_len + 3,
-                col_end = text:len(),
-                hl_group = "YanilTreeLinkTo",
-            },
-        }
-        return text, hls
-    else
-        local text = node.name
-        local hls = {
-            col_start = 0,
-            col_end = text:len(),
-            hl_group = node.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile",
-        }
-        return text, hls
     end
+
+    local text = node.name
+    local hls = {
+        col_start = 0,
+        col_end = text:len(),
+        hl_group = node.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile",
+    }
+    return text, hls
+end
+
+function M.link_to(node)
+    if not node:is_link() then return end
+
+    local text = string.format(" -> %s", node.link_to)
+    local hls = {
+        {
+            col_start = 1,
+            col_end = 3,
+            hl_group = "YanilTreeLinkArrow",
+        },
+        {
+            col_start = 4,
+            col_end = text:len(),
+            hl_group = "YanilTreeLinkTo",
+        },
+    }
+    return text, hls
 end
 
 function M.devicons(node)
@@ -61,8 +59,29 @@ function M.devicons(node)
     return get_devicon(node.name) .. " "
 end
 
-function M.indent(node)
+function M.plain_indent(node)
     return string.rep("  ", node.depth)
+end
+
+local function pretty_prefix(node)
+    if not node.parent then return "" end
+    if node == node.parent:get_last_entry() then
+        return pretty_prefix(node.parent) .. "   "
+    end
+    return pretty_prefix(node.parent) .. "│  "
+end
+
+function M.pretty_indent(node)
+    if not node.parent then return end
+
+    local prefix = pretty_prefix(node.parent)
+    local indent = node == node.parent:get_last_entry() and "└╴ " or "├╴ "
+    local text = prefix .. indent
+    return text, {
+        col_start = 0,
+        col_end = text:len(),
+        hl_group = "SpecialComment"
+    }
 end
 
 return M

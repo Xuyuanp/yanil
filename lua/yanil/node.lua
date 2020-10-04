@@ -8,6 +8,10 @@ local path_sep = utils.path_sep
 
 local startswith = vim.startswith
 
+local filetypes = {
+    "directory", "file", "link", "block", "char", "socket", "unknown"
+}
+
 local Node = {
     name = "",
     abs_path = "",
@@ -29,16 +33,20 @@ function Node:init()
     end
 end
 
+do
+    for _, ft in ipairs(filetypes) do
+        Node["is_" .. ft] = function(n)
+            return n.ntype == ft
+        end
+    end
+end
+
 function Node:is_dir()
-    return self.ntype == "directory"
+    return self:is_directory()
 end
 
 function Node:is_hidden()
     return startswith(self.name, ".")
-end
-
-function Node:is_link()
-    return self.ntype == "link"
 end
 
 function Node:__lt(rhs)
@@ -52,6 +60,7 @@ function Node:__lt(rhs)
 end
 
 local DirNode = Node:new {
+    super = Node,
     ntype = "directory",
     is_open = false,
     is_loaded = false,
@@ -59,12 +68,14 @@ local DirNode = Node:new {
 }
 
 local FileNode = Node:new {
+    super = Node,
     ntype = "file",
     is_exec = false,
     extension = "",
 }
 
-local LinkNode = Node:new {
+local LinkNode = FileNode:new {
+    super = FileNode,
     ntype = "link",
     link_to = nil,
 }
@@ -87,6 +98,7 @@ function FileNode:init()
 end
 
 function LinkNode:init()
+    self.super.init(self)
     self.link_to = loop.fs_realpath(self.abs_path)
 end
 
@@ -101,8 +113,8 @@ function DirNode:load()
         local name, ft = loop.fs_scandir_next(handle)
         if not name then break end
 
-        -- TODO: socket
-        local node = classes[ft]:new {
+        local class = classes[ft] or FileNode
+        local node = class:new {
             name = name,
             abs_path = self.abs_path .. path_sep .. name,
             depth = self.depth + 1,
@@ -139,7 +151,7 @@ function DirNode:get_nth_node(n)
             if index == n then return child end
 
             index = index + 1
-            if child.ntype == "directory" and child.is_open then
+            if child:is_dir() and child.is_open then
                 child = iter(child.entries)
                 if child then return child end
             end
@@ -189,7 +201,7 @@ function Node:draw(opts, lines, highlights)
 end
 
 function DirNode:draw(opts, lines, highlights)
-    lines, highlights = Node.draw(self, opts, lines, highlights)
+    lines, highlights = self.super.draw(self, opts, lines, highlights)
     if self.is_open then
         for _, child in ipairs(self.entries) do
             child:draw(opts, lines, highlights)
@@ -207,6 +219,10 @@ function DirNode:total_lines()
         end
     end
     return count
+end
+
+function DirNode:get_last_entry()
+    if #self.entries > 0 then return self.entries[#self.entries] end
 end
 
 return {

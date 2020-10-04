@@ -41,9 +41,11 @@ M.tree = {
     },
     draw_opts = {
         decorators = {
-            decorators.indent,
+            -- decorators.plain_indent,
+            decorators.pretty_indent,
             decorators.devicons,
             decorators.default,
+            decorators.link_to,
         },
     },
 }
