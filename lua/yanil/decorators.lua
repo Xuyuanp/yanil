@@ -84,4 +84,9 @@ function M.pretty_indent(node)
     }
 end
 
+-- for debuging
+function M.random(_)
+    return string.format("%d ", math.random(9))
+end
+
 return M

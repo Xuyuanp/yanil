@@ -1,6 +1,7 @@
 local vim = vim
 local api = vim.api
 local loop = vim.loop
+local validate = vim.validate
 
 local nodelib = require("yanil/node")
 local decorators = require("yanil/decorators")
@@ -78,11 +79,16 @@ function M.set_mappings()
         noremap = false,
         silent = false,
     })
+    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "r", '<cmd>lua require("yanil/ui").refresh_current_node()<CR>', {
+        nowait = true,
+        noremap = false,
+        silent = false,
+    })
 end
 
 function M.open_current_node()
     local cursor = api.nvim_win_get_cursor(M.tree.winnr())
-    local linenr = cursor[1] -- 1-based
+    local linenr = cursor[1] - 1
     local node = M.get_node_by_linenr(linenr)
     if not node then return end
 
@@ -92,29 +98,46 @@ function M.open_current_node()
         return
     end
 
-    local bufnr = M.tree.bufnr
-    api.nvim_buf_set_option(bufnr, "modifiable", true)
+    M.refresh_node(node, linenr, function()
+        node:toggle()
+    end)
+end
 
-    if node.is_open then
-        api.nvim_buf_set_lines(bufnr, linenr, linenr+node:total_lines(), false, {})
-        node.is_open = false
-    else
-        node:open()
-    end
+function M.refresh_current_node()
+    local cursor = api.nvim_win_get_cursor(M.tree.winnr())
+    local linenr = cursor[1] - 1
+    local node = M.get_node_by_linenr(linenr)
+    if not node then return end
+
+    M.refresh_node(node, linenr)
+end
+
+function M.refresh_node(node, linenr, action)
+    validate {
+        node = {node, "table", false},
+        linenr = {linenr, "number", false},
+        action = {action, "function", true},
+    }
+
+    local bufnr = M.tree.bufnr
+
+    local total_lines = node:total_lines()
+
+    if action then action() end
 
     local lines, highlights = node:draw(M.tree.draw_opts)
-    api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
-    api.nvim_buf_set_lines(bufnr, linenr - 1, linenr, false, {})
-    for _, hl in ipairs(highlights) do
-        api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + hl.line - 1, hl.col_start, hl.col_end)
-    end
 
+    api.nvim_buf_set_option(bufnr, "modifiable", true)
+    api.nvim_buf_set_lines(bufnr, linenr, linenr + total_lines, false, lines)
+    for _, hl in ipairs(highlights) do
+        api.nvim_buf_add_highlight(bufnr, ns_id, hl.hl_group, linenr + hl.line, hl.col_start, hl.col_end)
+    end
     api.nvim_buf_set_option(bufnr, "modifiable", false)
 end
 
 function M.change_dir_to_current_node()
     local node = M.get_node_under_cursor()
-    if not node then return end
+    if not node or not node:is_dir() then return end
 
     M.change_dir(node.abs_path)
 end
@@ -129,12 +152,13 @@ end
 
 function M.get_node_under_cursor()
     local cursor = api.nvim_win_get_cursor(M.tree.winnr())
-    return M.get_node_by_linenr(cursor[1])
+    return M.get_node_by_linenr(cursor[1] - 1)
 end
 
+-- linenr 0-based
 function M.get_node_by_linenr(linenr)
     local index = M.tree.header_height
-    return M.tree.root:get_nth_node(linenr - index - 1)
+    return M.tree.root:get_nth_node(linenr - index)
 end
 
 local function create_buf()

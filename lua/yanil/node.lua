@@ -134,9 +134,13 @@ function DirNode:open()
     self.is_open = true
 end
 
+function DirNode:close()
+    self.is_open = false
+end
+
 function DirNode:toggle()
     if self.is_open then
-        self.is_open = false
+        self:close()
     else
         self:open()
     end
@@ -215,11 +219,14 @@ function DirNode:draw(opts, lines, highlights)
     return lines, highlights
 end
 
+function Node:total_lines()
+    return 1
+end
+
 function DirNode:total_lines()
-    local count = 0
-    for _, child in ipairs(self.entries) do
-        count = count + 1
-        if child.ntype == "directory" and child.is_open then
+    local count = 1
+    if self.is_open then
+        for _, child in ipairs(self.entries) do
             count = count + child:total_lines()
         end
     end
