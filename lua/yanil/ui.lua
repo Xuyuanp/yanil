@@ -3,12 +3,17 @@ local api = vim.api
 local loop = vim.loop
 local validate = vim.validate
 
-local nodelib = require("yanil/node")
+local nodelib    = require("yanil/node")
 local decorators = require("yanil/decorators")
+local utils = require("yanil/utils")
 
-local ns_id = api.nvim_create_namespace("Yanil")
+local config = {
+    colors   = require("yanil/colors"),
+    commands = require("yanil/commands"),
+    keymaps  = require("yanil/keymaps"),
+}
 
-require("yanil/colors").setup()
+local ns_id = utils.ns_id
 
 local M = {}
 
@@ -21,7 +26,8 @@ M.tree = {
     header_height = 2,
     winnr = function()
         for _, winnr in ipairs(api.nvim_list_wins()) do
-            if api.nvim_buf_get_name(api.nvim_win_get_buf(winnr)):match(".*/"..M.tree.bufname.."$") then
+            local bufname = api.nvim_buf_get_name(api.nvim_win_get_buf(winnr))
+            if bufname:match(".*/"..M.tree.bufname.."$") then
                 return winnr
             end
         end
@@ -52,7 +58,7 @@ M.tree = {
 }
 
 function M.init(cwd)
-    cwd = cwd or loop.cwd()
+    cwd = cwd and vim.fn.fnamemodify(cwd, ":p:h") or loop.cwd()
     M.tree.cwd = cwd
     local root = nodelib.Dir:new {
         name = cwd,
@@ -144,7 +150,7 @@ end
 
 function M.change_dir_to_parent()
     if M.tree.cwd == "/" then return end
-    local parent = vim.fn.fnamemodify(M.tree.cwd, ":h")
+    local parent = vim.fn.fnamemodify(M.tree.cwd, ":p:h")
     if not parent then return end
 
     M.change_dir(parent)
@@ -223,6 +229,13 @@ function M.startup(cwd)
     M.init(cwd)
     M.open()
     M.draw()
+end
+
+function M.setup(opts)
+    opts = opts or {}
+    config.colors.setup()
+    config.commands.setup()
+    config.keymaps.setup(opts.keymaps)
 end
 
 return M

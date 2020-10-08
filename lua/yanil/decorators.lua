@@ -48,7 +48,7 @@ end
 function M.devicons(node)
     if not node.parent then return end
     if node:is_dir() then
-        local text = node.is_open and " " or " "
+        local text = string.format("%s ", node.is_open and "" or "")
         return text, {
             col_start = 0,
             col_end = text:len() - 1,
@@ -75,7 +75,7 @@ function M.pretty_indent(node)
     if not node.parent then return end
 
     local prefix = pretty_prefix(node.parent)
-    local indent = node == node.parent:get_last_entry() and "└╴ " or "├╴ "
+    local indent = node == node.parent:get_last_entry() and "└╴ " or (node:is_dir() and "├╴ " or "│  ")
     local text = prefix .. indent
     return text, {
         col_start = 0,
