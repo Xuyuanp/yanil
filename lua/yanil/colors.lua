@@ -13,6 +13,18 @@ local default_highlight = {
         LinkArrow      = "Blue",
         LinkTo         = "Normal",
     },
+    Git = {
+        Unmerged  = "Function",
+        Modified  = "Special",
+        Staged    = "Function",
+        Renamed   = "Title",
+        Untracked = "Comment",
+        Dirty     = "Tag",
+        Deleted   = "Operator",
+        Ignored   = "SpecialKey",
+        Clean     = "Method",
+        Unknown   = "Error",
+    },
 }
 
 local M = {}

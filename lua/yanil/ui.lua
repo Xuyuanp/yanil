@@ -6,6 +6,7 @@ local validate = vim.validate
 local nodelib    = require("yanil/node")
 local decorators = require("yanil/decorators")
 local utils      = require("yanil/utils")
+local git        = require("yanil/git")
 
 local config = {
     colors   = require("yanil/colors"),
@@ -50,6 +51,7 @@ M.tree = {
         decorators = {
             decorators.plain_indent,
             -- decorators.pretty_indent,
+            git.decorator(),
             decorators.devicons,
             decorators.default,
             decorators.executable,
@@ -229,6 +231,7 @@ end
 
 function M.startup(cwd)
     M.init(cwd)
+    git.update()
     M.open()
     M.draw()
 end
@@ -238,6 +241,7 @@ function M.setup(opts)
     config.colors.setup()
     config.commands.setup()
     config.keymaps.setup(opts.keymaps)
+    git.setup(opts.git)
 end
 
 return M
