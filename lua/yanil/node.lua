@@ -180,7 +180,8 @@ function DirNode:toggle()
 end
 
 function DirNode:iter()
-    local stack = utils.Stack:new { self }
+    local stack = utils.new_stack()
+    stack:push(self)
     return function()
         local current_node = stack:pop()
         if not current_node then return end

@@ -57,6 +57,7 @@ function M.update()
     })
     if vim.v.shell_error > 0 then
         api.nvim_err_writeln(string.format("execute git status failed: %s", result))
+        return
     end
     local lines = vim.split(result, delimiter)
 

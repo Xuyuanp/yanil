@@ -2,35 +2,35 @@ local vim = vim
 local api = vim.api
 local loop = vim.loop
 
-local Stack = {}
+local function new_stack()
+    local head = { next = nil }
 
-function Stack:new(o)
-    o = o or {}
-    setmetatable(o, self)
-    self.__index = self
-    return o
-end
+    local stack = {}
 
-function Stack:is_empty()
-    return vim.tbl_isempty(self)
-end
+    function stack:is_empty()
+        return head.next == nil
+    end
 
-function Stack:push(item)
-    table.insert(self, item)
-end
+    function stack:push(item)
+        local o = { next = head.next, value = item }
+        head.next =  o
+    end
 
-function Stack:pop()
-    if self:is_empty() then return end
-    local size = #self
-    local item = self[size]
-    table.remove(self, size)
-    return item
+    function stack:pop()
+        if stack:is_empty() then return end
+
+        local item = head.next.value
+        head.next = head.next.next
+        return item
+    end
+
+    return stack
 end
 
 local M = {
     path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
     ns_id = api.nvim_create_namespace("Yanil"),
-    Stack = Stack,
+    new_stack = new_stack,
 }
 
 return M
