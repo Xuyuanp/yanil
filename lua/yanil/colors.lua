@@ -3,15 +3,15 @@ local api = vim.api
 
 local default_highlight = {
     Tree = {
-        Root = "Tag",
-        Directory = "Green",
-        File = "Normal",
+        Root           = "Tag",
+        Directory      = "Green",
+        File           = "Normal",
         FileExecutable = "Keyword",
-        FileReadonly = "Special",
-        Link = "SpecialComment",
-        LinkBroken = "IncSearch",
-        LinkArrow = "Blue",
-        LinkTo = "Normal",
+        FileReadonly   = "Special",
+        Link           = "SpecialComment",
+        LinkBroken     = "IncSearch",
+        LinkArrow      = "Blue",
+        LinkTo         = "Normal",
     },
 }
 

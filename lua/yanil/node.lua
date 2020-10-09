@@ -230,10 +230,11 @@ function Node:draw(opts, lines, highlights)
             hls = hls or {}
             if not vim.tbl_islist(hls) then hls = {hls} end
             for _, hl in ipairs(hls) do
+                if type(hl) == "string" then hl = {hl_group = hl} end
                 table.insert(highlights, {
                     line      = line,
-                    col_start = hl_offset + hl.col_start,
-                    col_end   = hl_offset + hl.col_end,
+                    col_start = hl_offset + (hl.col_start or 0),
+                    col_end   = hl_offset + (hl.col_end or text:len()),
                     hl_group  = hl.hl_group,
                 })
             end

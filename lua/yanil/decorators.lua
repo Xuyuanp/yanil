@@ -27,12 +27,7 @@ function M.default(node)
         end
     end
 
-    local hls = {
-        col_start = 0,
-        col_end = text:len(),
-        hl_group = hl_group,
-    }
-    return text, hls
+    return text, hl_group
 end
 
 function M.link_to(node)
@@ -57,11 +52,7 @@ end
 function M.executable(node)
     if node:is_dir() or not node.is_exec then return end
     local text = "*"
-    return text, {
-        col_start = 0,
-        col_end = text:len(),
-        hl_group = "YanilTreeFileExecutable",
-    }
+    return text, "YanilTreeFileExecutable"
 end
 
 function M.readonly(node)
@@ -73,13 +64,10 @@ function M.devicons(node)
     if not node.parent then return end
     if node:is_dir() then
         local text = string.format("%s ", node.is_open and "" or "")
-        return text, {
-            col_start = 0,
-            col_end = text:len() - 1,
-            hl_group = node:is_link() and "YanilTreeLink" or "YanilTreeDirectory",
-        }
+        return text, node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
     end
 
+    -- TODO: add highlight
     return get_devicon(node.name) .. " "
 end
 
@@ -101,11 +89,7 @@ function M.pretty_indent(node)
     local prefix = pretty_prefix(node.parent)
     local indent = node == node.parent:get_last_entry() and "└╴ " or (node:is_dir() and "├╴ " or "│  ")
     local text = prefix .. indent
-    return text, {
-        col_start = 0,
-        col_end = text:len(),
-        hl_group = "SpecialComment"
-    }
+    return text, "SpecialComment"
 end
 
 -- for debuging

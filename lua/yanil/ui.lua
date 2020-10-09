@@ -5,7 +5,7 @@ local validate = vim.validate
 
 local nodelib    = require("yanil/node")
 local decorators = require("yanil/decorators")
-local utils = require("yanil/utils")
+local utils      = require("yanil/utils")
 
 local config = {
     colors   = require("yanil/colors"),
@@ -48,8 +48,8 @@ M.tree = {
     },
     draw_opts = {
         decorators = {
-            -- decorators.plain_indent,
-            decorators.pretty_indent,
+            decorators.plain_indent,
+            -- decorators.pretty_indent,
             decorators.devicons,
             decorators.default,
             decorators.executable,
