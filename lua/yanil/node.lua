@@ -147,14 +147,13 @@ function DirNode:toggle()
 end
 
 function DirNode:iter()
-    local nodes = { self }
+    local stack = utils.Stack:new { self }
     return function()
-        if vim.tbl_isempty(nodes) then return end
-        local index = #nodes
-        local current_node = table.remove(nodes, index)
+        local current_node = stack:pop()
+        if not current_node then return end
         if current_node:is_dir() and current_node.is_open then
-            for _, child in ipairs(current_node.entries) do
-                table.insert(nodes, index, child)
+            for index = #current_node.entries, 1, -1 do
+                stack:push(current_node.entries[index])
             end
         end
         return current_node
