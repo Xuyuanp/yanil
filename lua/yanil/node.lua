@@ -132,6 +132,12 @@ function DirNode:open()
     if self.is_open then return end
     if not self.is_loaded then self:load() end
     self.is_open = true
+
+    if #self.entries > 1 then return end
+
+    local child = self.entries[1]
+    if not child:is_dir() or child.is_loaded then return end
+    child:open()
 end
 
 function DirNode:close()
