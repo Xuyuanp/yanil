@@ -22,7 +22,6 @@ function Node:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.__lt = Node.__lt
     o:init()
     return o
 end
@@ -47,16 +46,6 @@ end
 
 function Node:is_hidden()
     return startswith(self.name, ".")
-end
-
-function Node:__lt(rhs)
-    if self:is_dir() and not rhs:is_dir() then return true end
-    if not self:is_dir() and rhs:is_dir() then return false end
-
-    if self:is_hidden() and not rhs:is_hidden() then return true end
-    if not self:is_hidden() and rhs:is_hidden() then return false end
-
-    return self.name < rhs.name
 end
 
 local DirNode = Node:new {
@@ -176,7 +165,12 @@ end
 
 -- TODO: more sort options
 function DirNode:sort_entries(_opts)
-    table.sort(self.entries)
+    table.sort(self.entries, function(lhs, rhs)
+        if lhs:is_dir() and not rhs:is_dir() then return true end
+        if rhs:is_dir() and not lhs:is_dir() then return false end
+
+        return lhs.name < rhs.name
+    end)
 end
 
 function Node:draw(opts, lines, highlights)
