@@ -1,12 +1,13 @@
 local vim = vim
-local validate = vim.validate
 local api = vim.api
+local validate = vim.validate
 local loop = vim.loop
 
 local utils = require("yanil/utils")
 local path_sep = utils.path_sep
 
 local startswith = vim.startswith
+local endswith = vim.endswith
 
 local filetypes = {
     "directory", "file", "link", "block", "char", "socket", "unknown"
@@ -49,7 +50,6 @@ function Node:is_hidden()
 end
 
 local DirNode = Node:new {
-    super = Node,
     ntype = "directory",
     is_open = false,
     is_loaded = false,
@@ -57,16 +57,19 @@ local DirNode = Node:new {
 }
 
 local FileNode = Node:new {
-    super = Node,
     ntype = "file",
     is_exec = false,
     extension = "",
 }
 
 local LinkNode = FileNode:new {
-    super = FileNode,
     ntype = "link",
     link_to = nil,
+}
+
+local LinkDirNode = DirNode:new {
+    ntype = "link",
+    link_to = nil
 }
 
 local classes = {
@@ -83,18 +86,36 @@ end
 
 function FileNode:init()
     self.is_exec = loop.fs_access(self.abs_path, "X")
+    self.is_readonly = not loop.fs_access(self.abs_path, "W")
     self.extension = vim.fn.fnamemodify(self.abs_path, ":e") or ""
 end
 
 function LinkNode:init()
-    self.super.init(self)
-    self.link_to = loop.fs_realpath(self.abs_path)
+    FileNode.init(self)
+
+    if self.link_to then
+        local stat = loop.fs_stat(self.link_to)
+        self.link_to_type = stat.type
+    end
+end
+
+function LinkNode:is_broken()
+    return not self.link_to
+end
+
+function LinkDirNode:init()
+    DirNode.init(self)
+    self.link_to_type = "directory"
+end
+
+function LinkDirNode:is_directory()
+    return true
 end
 
 function DirNode:load()
-    local handle = loop.fs_scandir(self.abs_path)
-    if type(handle) == "string" then
-        api.nvim_err_writeln("scandir", self.abs_path, " failed:", handle)
+    local handle, err = loop.fs_scandir(self.abs_path)
+    if not handle then
+        api.nvim_err_writeln(string.format("scandir %s failed: %s", self.abs_path, err))
         return
     end
 
@@ -103,10 +124,27 @@ function DirNode:load()
         if not name then break end
 
         local class = classes[ft] or FileNode
+
+        local abs_path = self.abs_path
+        if not endswith(abs_path, path_sep) then
+            abs_path = abs_path .. path_sep
+        end
+        abs_path = abs_path .. name
+
+        local realpath = nil
+        if ft == "link" then
+            realpath = loop.fs_realpath(abs_path)
+            if realpath then
+                local stat = loop.fs_stat(realpath)
+                if stat.type == "directory" then class = LinkDirNode end
+            end
+        end
+
         local node = class:new {
             name = name,
-            abs_path = self.abs_path .. path_sep .. name,
+            abs_path = abs_path,
             depth = self.depth + 1,
+            link_to = realpath,
             parent = self,
         }
         table.insert(self.entries, node)
@@ -122,7 +160,7 @@ function DirNode:open()
     if not self.is_loaded then self:load() end
     self.is_open = true
 
-    if #self.entries > 1 then return end
+    if #self.entries ~= 1 then return end
 
     local child = self.entries[1]
     if not child:is_dir() or child.is_loaded then return end
@@ -209,7 +247,7 @@ function Node:draw(opts, lines, highlights)
 end
 
 function DirNode:draw(opts, lines, highlights)
-    lines, highlights = self.super.draw(self, opts, lines, highlights)
+    lines, highlights = Node.draw(self, opts, lines, highlights)
     if self.is_open then
         for _, child in ipairs(self.entries) do
             child:draw(opts, lines, highlights)

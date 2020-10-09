@@ -52,6 +52,8 @@ M.tree = {
             decorators.pretty_indent,
             decorators.devicons,
             decorators.default,
+            decorators.executable,
+            decorators.readonly,
             decorators.link_to,
         },
     },

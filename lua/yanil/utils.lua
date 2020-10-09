@@ -27,7 +27,6 @@ function Stack:pop()
     return item
 end
 
-
 local M = {
     path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
     ns_id = api.nvim_create_namespace("Yanil"),

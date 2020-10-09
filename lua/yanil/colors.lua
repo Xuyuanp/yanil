@@ -8,9 +8,10 @@ local default_highlight = {
         File = "Normal",
         FileExecutable = "Keyword",
         FileReadonly = "Special",
-        Link = "Normal",
+        Link = "SpecialComment",
+        LinkBroken = "IncSearch",
         LinkArrow = "Blue",
-        LinkTo = "Comment",
+        LinkTo = "Normal",
     },
 }
 

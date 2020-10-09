@@ -8,20 +8,29 @@ local get_devicon = vim.fn.WebDevIconsGetFileTypeSymbol
 local M = {}
 
 function M.default(node)
+    local text = node.name
+    local hl_group = "YanilTreeFile"
     if node:is_dir() then
-        local text = node.name .. path_sep
-        return text, {
-            col_start = 0,
-            col_end = text:len(),
-            hl_group = node.parent and "YanilTreeDirectory" or "YanilTreeRoot",
-        }
+        if not vim.endswith(text, path_sep) then
+            text = text .. path_sep
+        end
+        if not node.parent then
+            hl_group = "YanilTreeRoot"
+        else
+            hl_group = node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
+        end
+    else
+        if node:is_link() then
+            hl_group = node:is_broken() and "YanilTreeLinkBroken" or "YanilTreeLink"
+        elseif node.is_exec then
+            hl_group = "YanilTreeFileExecutable"
+        end
     end
 
-    local text = node.name
     local hls = {
         col_start = 0,
         col_end = text:len(),
-        hl_group = node.is_exec and "YanilTreeFileExecutable" or "YanilTreeFile",
+        hl_group = hl_group,
     }
     return text, hls
 end
@@ -45,6 +54,21 @@ function M.link_to(node)
     return text, hls
 end
 
+function M.executable(node)
+    if node:is_dir() or not node.is_exec then return end
+    local text = "*"
+    return text, {
+        col_start = 0,
+        col_end = text:len(),
+        hl_group = "YanilTreeFileExecutable",
+    }
+end
+
+function M.readonly(node)
+    if not node.is_readonly then return end
+    return " "
+end
+
 function M.devicons(node)
     if not node.parent then return end
     if node:is_dir() then
@@ -52,7 +76,7 @@ function M.devicons(node)
         return text, {
             col_start = 0,
             col_end = text:len() - 1,
-            hl_group = "YanilTreeDirectory",
+            hl_group = node:is_link() and "YanilTreeLink" or "YanilTreeDirectory",
         }
     end
 
