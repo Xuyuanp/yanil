@@ -49,9 +49,9 @@ M.tree = {
     },
     draw_opts = {
         decorators = {
-            decorators.plain_indent,
+            -- decorators.plain_indent,
             -- decorators.pretty_indent,
-            git.decorator(),
+            decorators.pretty_indent_with_git,
             decorators.devicons,
             decorators.default,
             decorators.executable,
@@ -154,7 +154,7 @@ end
 
 function M.change_dir_to_parent()
     if M.tree.cwd == "/" then return end
-    local parent = vim.fn.fnamemodify(M.tree.cwd, ":p:h")
+    local parent = vim.fn.fnamemodify(M.tree.cwd, ":p:h:h")
     if not parent then return end
 
     M.change_dir(parent)
@@ -187,7 +187,7 @@ end
 
 local function create_win()
     api.nvim_command("topleft vertical " .. M.tree.win_width .. " new")
-    api.nvim_command("setlocal nobuflisted")
+    api.nvim_command("setlocal bufhidden=wipe")
 end
 
 function M.open()
@@ -227,13 +227,15 @@ function M.change_dir(cwd)
     M.draw()
 
     api.nvim_win_set_cursor(M.tree.winnr(), {3, 0})
+    git.update()
 end
 
 function M.startup(cwd)
     M.init(cwd)
-    git.update()
     M.open()
     M.draw()
+
+    git.update()
 end
 
 function M.setup(opts)

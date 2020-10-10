@@ -11,9 +11,6 @@ function M.default(node)
     local text = node.name
     local hl_group = "YanilTreeFile"
     if node:is_dir() then
-        if not vim.endswith(text, path_sep) then
-            text = text .. path_sep
-        end
         if not node.parent then
             hl_group = "YanilTreeRoot"
         else
@@ -90,6 +87,30 @@ function M.pretty_indent(node)
     local indent = node == node.parent:get_last_entry() and "└╴ " or (node:is_dir() and "├╴ " or "│  ")
     local text = prefix .. indent
     return text, "SpecialComment"
+end
+
+function M.pretty_indent_with_git(node)
+    local text, hl = M.pretty_indent(node)
+    if not text then return end
+
+    local hls = {{
+        col_start = 0,
+        col_end = text:len(),
+        hl_group = hl,
+    }}
+
+    local git = require("yanil/git")
+    local git_icon, git_hl = git.get_icon_and_hl(node.abs_path)
+    if git_icon then
+        local suffix_len = vim.endswith(text, "╴ ") and 4 or 2
+        text = text:sub(0, -(suffix_len + 1)) .. git_icon .. " "
+        table.insert(hls, {
+            col_start = text:len() - git_icon:len() - 1,
+            col_end = text:len() - 1,
+            hl_group = git_hl,
+        })
+    end
+    return text, hls
 end
 
 -- for debuging

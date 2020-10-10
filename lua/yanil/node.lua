@@ -82,6 +82,9 @@ function DirNode:init()
     local stat = loop.fs_stat(self.abs_path)
     self.last_modified = stat.mtime.sec
     self.entries = {}
+
+    if not endswith(self.name, path_sep) then self.name = self.name .. path_sep end
+    if not endswith(self.abs_path, path_sep) then self.abs_path = self.abs_path .. path_sep end
 end
 
 function FileNode:init()
