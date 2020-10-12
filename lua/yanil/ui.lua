@@ -65,7 +65,6 @@ M.tree = {
 }
 
 function M.init(cwd)
-    devicons.setup()
     cwd = cwd and vim.fn.fnamemodify(cwd, ":p:h") or loop.cwd()
     M.tree.cwd = cwd
     local root = nodelib.Dir:new {
@@ -259,6 +258,7 @@ function M.setup(opts)
     config.commands.setup()
     config.keymaps.setup(opts.keymaps)
     git.setup(opts.git)
+    devicons.setup()
 end
 
 return M

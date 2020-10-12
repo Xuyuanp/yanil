@@ -788,209 +788,209 @@ local default_devicons = {
     },
 }
 
-local exact_matches = {
-    [".bashprofile"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    [".bashrc"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    [".ds_store"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    [".gitattributes"] = {
-        icon = ""
-    },
-    [".gitconfig"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    [".gitignore"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    [".gitlab-ci.yml"] = {
-        hl = {
-            ctermfg = "172",
-            guifg = "#D4843E"
-        },
-        icon = ""
-    },
-    [".gvimrc"] = {
-        hl = {
-            ctermfg = "107",
-            guifg = "#8FAA54"
-        },
-        icon = ""
-    },
-    [".vimrc"] = {
-        hl = {
-            ctermfg = "107",
-            guifg = "#8FAA54"
-        },
-        icon = ""
-    },
-    [".zshrc"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    _gvimrc = {
-        hl = {
-            ctermfg = "107",
-            guifg = "#8FAA54"
-        },
-        icon = ""
-    },
-    _vimrc = {
-        hl = {
-            ctermfg = "107",
-            guifg = "#8FAA54"
-        },
-        icon = ""
-    },
-    ["cmakelists.txt"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    ["config.ru"] = {
-        icon = ""
-    },
-    ["docker-compose.yml"] = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
-    },
-    dockerfile = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
-    },
-    dropbox = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
-    },
-    ["favicon.ico"] = {
-        hl = {
-            ctermfg = "214",
-            guifg = "#F09F17"
-        },
-        icon = ""
-    },
-    gemfile = {
-        icon = ""
-    },
-    ["gruntfile.coffee"] = {
-        hl = {
-            ctermfg = "214",
-            guifg = "#F09F17"
-        },
-        icon = ""
-    },
-    ["gruntfile.js"] = {
-        hl = {
-            ctermfg = "214",
-            guifg = "#F09F17"
-        },
-        icon = ""
-    },
-    ["gruntfile.ls"] = {
-        hl = {
-            ctermfg = "214",
-            guifg = "#F09F17"
-        },
-        icon = ""
-    },
-    ["gulpfile.coffee"] = {
-        hl = {
-            ctermfg = "167",
-            guifg = "#CB6F6F"
-        },
-        icon = ""
-    },
-    ["gulpfile.js"] = {
-        hl = {
-            ctermfg = "167",
-            guifg = "#CB6F6F"
-        },
-        icon = ""
-    },
-    ["gulpfile.ls"] = {
-        hl = {
-            ctermfg = "167",
-            guifg = "#CB6F6F"
-        },
-        icon = ""
-    },
-    license = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    makefile = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    ["mix.lock"] = {
-        hl = {
-            ctermfg = "231",
-            guifg = "#FFFFFF"
-        },
-        icon = ""
-    },
-    node_modules = {
-        hl = {
-            ctermfg = "107",
-            guifg = "#8FAA54"
-        },
-        icon = ""
-    },
-    procfile = {
-        hl = {
-            ctermfg = "96",
-            guifg = "#834F79"
-        },
-        icon = ""
-    },
-    rakefile = {
-        icon = ""
-    },
-}
+-- local exact_matches = {
+--     [".bashprofile"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     [".bashrc"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     [".ds_store"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     [".gitattributes"] = {
+--         icon = ""
+--     },
+--     [".gitconfig"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     [".gitignore"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     [".gitlab-ci.yml"] = {
+--         hl = {
+--             ctermfg = "172",
+--             guifg = "#D4843E"
+--         },
+--         icon = ""
+--     },
+--     [".gvimrc"] = {
+--         hl = {
+--             ctermfg = "107",
+--             guifg = "#8FAA54"
+--         },
+--         icon = ""
+--     },
+--     [".vimrc"] = {
+--         hl = {
+--             ctermfg = "107",
+--             guifg = "#8FAA54"
+--         },
+--         icon = ""
+--     },
+--     [".zshrc"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     _gvimrc = {
+--         hl = {
+--             ctermfg = "107",
+--             guifg = "#8FAA54"
+--         },
+--         icon = ""
+--     },
+--     _vimrc = {
+--         hl = {
+--             ctermfg = "107",
+--             guifg = "#8FAA54"
+--         },
+--         icon = ""
+--     },
+--     ["cmakelists.txt"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     ["config.ru"] = {
+--         icon = ""
+--     },
+--     ["docker-compose.yml"] = {
+--         hl = {
+--             ctermfg = "73",
+--             guifg = "#689FB6"
+--         },
+--         icon = ""
+--     },
+--     dockerfile = {
+--         hl = {
+--             ctermfg = "73",
+--             guifg = "#689FB6"
+--         },
+--         icon = ""
+--     },
+--     dropbox = {
+--         hl = {
+--             ctermfg = "73",
+--             guifg = "#689FB6"
+--         },
+--         icon = ""
+--     },
+--     ["favicon.ico"] = {
+--         hl = {
+--             ctermfg = "214",
+--             guifg = "#F09F17"
+--         },
+--         icon = ""
+--     },
+--     gemfile = {
+--         icon = ""
+--     },
+--     ["gruntfile.coffee"] = {
+--         hl = {
+--             ctermfg = "214",
+--             guifg = "#F09F17"
+--         },
+--         icon = ""
+--     },
+--     ["gruntfile.js"] = {
+--         hl = {
+--             ctermfg = "214",
+--             guifg = "#F09F17"
+--         },
+--         icon = ""
+--     },
+--     ["gruntfile.ls"] = {
+--         hl = {
+--             ctermfg = "214",
+--             guifg = "#F09F17"
+--         },
+--         icon = ""
+--     },
+--     ["gulpfile.coffee"] = {
+--         hl = {
+--             ctermfg = "167",
+--             guifg = "#CB6F6F"
+--         },
+--         icon = ""
+--     },
+--     ["gulpfile.js"] = {
+--         hl = {
+--             ctermfg = "167",
+--             guifg = "#CB6F6F"
+--         },
+--         icon = ""
+--     },
+--     ["gulpfile.ls"] = {
+--         hl = {
+--             ctermfg = "167",
+--             guifg = "#CB6F6F"
+--         },
+--         icon = ""
+--     },
+--     license = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     makefile = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     ["mix.lock"] = {
+--         hl = {
+--             ctermfg = "231",
+--             guifg = "#FFFFFF"
+--         },
+--         icon = ""
+--     },
+--     node_modules = {
+--         hl = {
+--             ctermfg = "107",
+--             guifg = "#8FAA54"
+--         },
+--         icon = ""
+--     },
+--     procfile = {
+--         hl = {
+--             ctermfg = "96",
+--             guifg = "#834F79"
+--         },
+--         icon = ""
+--     },
+--     rakefile = {
+--         icon = ""
+--     },
+-- }
 
 local vim = vim
 local api = vim.api
@@ -1006,10 +1006,17 @@ local function highlight_define(ft, ctermfg, guifg)
     api.nvim_command(cmd)
 end
 
-function M.setup()
+function M.setup_highlight()
     for ft, cfg in pairs(default_devicons) do
         if cfg.hl then highlight_define(ft, cfg.hl.ctermfg, cfg.hl.guifg) end
     end
+end
+
+function M.setup()
+    api.nvim_command("augroup yanil_devicons_highlight")
+    api.nvim_command("autocmd!")
+    api.nvim_command("autocmd ColorScheme * lua require('yanil/devicons').setup_highlight()")
+    api.nvim_command("augroup end")
 end
 
 function M.get(_name, ext)
@@ -1021,7 +1028,6 @@ end
 
 function M.decorator()
     return function(node)
-        if not node.parent then return end
         if node:is_dir() then
             local text = node.is_open and "" or ""
             return text, node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
