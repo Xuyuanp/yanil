@@ -2,7 +2,12 @@ local vim = vim
 local api = vim.api
 local loop = vim.loop
 
-local function new_stack()
+local M = {
+    path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
+    ns_id = api.nvim_create_namespace("Yanil"),
+}
+
+function M.new_stack()
     local head = { next = nil }
 
     local stack = {}
@@ -27,7 +32,7 @@ local function new_stack()
     return stack
 end
 
-local function spawn(path, options, callback)
+function M.spawn(path, options, callback)
     local stdout = loop.new_pipe(false)
     local stderr = loop.new_pipe(false)
 
@@ -52,12 +57,5 @@ local function spawn(path, options, callback)
         stderr_chunk = (stderr_chunk or "") .. data
     end)
 end
-
-local M = {
-    path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
-    ns_id = api.nvim_create_namespace("Yanil"),
-    new_stack = new_stack,
-    spawn = spawn,
-}
 
 return M

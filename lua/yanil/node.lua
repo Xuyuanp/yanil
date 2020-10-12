@@ -59,7 +59,7 @@ local DirNode = Node:new {
 local FileNode = Node:new {
     ntype = "file",
     is_exec = false,
-    extension = "",
+    extension = nil,
 }
 
 local LinkNode = FileNode:new {
@@ -283,4 +283,5 @@ return {
     Dir = DirNode,
     File = FileNode,
     Link = LinkNode,
+    LinkDirNode = LinkDirNode,
 }

@@ -1,10 +1,5 @@
 local vim = vim
 
-local utils = require("yanil/utils")
-local path_sep = utils.path_sep
-
-local get_devicon = vim.fn.WebDevIconsGetFileTypeSymbol
-
 local M = {}
 
 function M.default(node)
@@ -57,15 +52,8 @@ function M.readonly(node)
     return " "
 end
 
-function M.devicons(node)
-    if not node.parent then return end
-    if node:is_dir() then
-        local text = string.format("%s ", node.is_open and "" or "")
-        return text, node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
-    end
-
-    -- TODO: add highlight
-    return get_devicon(node.name) .. " "
+function M.space(_node)
+    return " "
 end
 
 function M.plain_indent(node)

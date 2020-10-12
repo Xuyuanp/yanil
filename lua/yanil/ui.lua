@@ -5,6 +5,7 @@ local validate = vim.validate
 
 local nodelib    = require("yanil/node")
 local decorators = require("yanil/decorators")
+local devicons   = require("yanil/devicons")
 local utils      = require("yanil/utils")
 local git        = require("yanil/git")
 
@@ -52,7 +53,9 @@ M.tree = {
             -- decorators.plain_indent,
             -- decorators.pretty_indent,
             decorators.pretty_indent_with_git,
-            decorators.devicons,
+            -- decorators.devicons,
+            devicons.decorator(),
+            decorators.space,
             decorators.default,
             decorators.executable,
             decorators.readonly,
@@ -62,6 +65,7 @@ M.tree = {
 }
 
 function M.init(cwd)
+    devicons.setup()
     cwd = cwd and vim.fn.fnamemodify(cwd, ":p:h") or loop.cwd()
     M.tree.cwd = cwd
     local root = nodelib.Dir:new {
@@ -94,9 +98,20 @@ function M.set_mappings()
         noremap = false,
         silent = false,
     })
+    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "i", '<cmd>lua require("yanil/ui").open_current_node("split")<CR>', {
+        nowait = true,
+        noremap = false,
+        silent = false,
+    })
+    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "s", '<cmd>lua require("yanil/ui").open_current_node("vsplit")<CR>', {
+        nowait = true,
+        noremap = false,
+        silent = false,
+    })
 end
 
-function M.open_current_node()
+function M.open_current_node(cmd)
+    cmd = cmd or "e"
     local cursor = api.nvim_win_get_cursor(M.tree.winnr())
     local linenr = cursor[1] - 1
     local node = M.get_node_by_linenr(linenr)
@@ -104,7 +119,7 @@ function M.open_current_node()
 
     if not node:is_dir() then
         api.nvim_command("wincmd p")
-        api.nvim_command("e " .. node.abs_path)
+        api.nvim_command(cmd .. " " .. node.abs_path)
         return
     end
 
