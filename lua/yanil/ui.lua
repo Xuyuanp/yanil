@@ -232,6 +232,7 @@ function M.draw()
 end
 
 function M.refresh_ui()
+    if not M.tree.winnr() then return end
     M.draw()
 end
 

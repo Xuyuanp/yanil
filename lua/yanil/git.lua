@@ -34,13 +34,42 @@ function M.setup(opts)
     opts = opts or {}
     M.options.icons = vim.tbl_deep_extend("keep", opts.icons or {}, default_options.icons)
     M.options.highlights = vim.tbl_deep_extend("keep", opts.highlights or {}, default_options.highlights)
+
+    api.nvim_command("augroup yanil_git")
+    api.nvim_command("autocmd!")
+    api.nvim_command("autocmd BufWritePost * lua require('yanil/git').update()")
+    api.nvim_command("augroup end")
 end
 
 local delimiter = string.char(0)
 
+-- man git-status
+-- X          Y     Meaning
+-- -------------------------------------------------
+--           [MD]   not updated
+-- M        [ MD]   updated in index
+-- A        [ MD]   added to index
+-- D         [ M]   deleted from index
+-- R        [ MD]   renamed in index
+-- C        [ MD]   copied in index
+-- [MARC]           index and work tree matches
+-- [ MARC]     M    work tree changed since index
+-- [ MARC]     D    deleted in work tree
+local function get_status(x, y)
+    if y == "M" then
+        return "Modified"
+    elseif x == "D" or y == "D" then
+        return "Deleted"
+    elseif x == "M" or x == "A" then
+        return "Staged"
+    else
+        error(string.format("unexpected status %s%s", x, y))
+    end
+end
+
 local parsers = {
     ["1"] = function(line)
-        return "Modified", line:sub(114, -1)
+        return get_status(line:sub(3, 3), line:sub(4, 4)), line:sub(114, -1)
     end,
     ["2"] = function(line)
         return "Renamed", line:sub(114, -1)
@@ -62,9 +91,9 @@ function M.update()
 
     local git_root
 
-    local function status_callback(code, _signal, stdout, stderr)
+    local status_callback = vim.schedule_wrap(function(code, _signal, stdout, stderr)
         if code > 0 then
-            print("git status failed:", stderr)
+            api.nvim_err_writeln(string.format("git status failed: %s", stderr))
             return
         end
 
@@ -90,14 +119,19 @@ function M.update()
 
             local abs_path = git_root .. path
             state[abs_path] = status
+
+            while vim.startswith(abs_path, git_root) do
+                abs_path = vim.fn.fnamemodify(abs_path, ":h")
+                local dir = abs_path .. utils.path_sep
+                if state[dir] then break end
+                state[dir] = "Dirty"
+            end
         end
 
         M.state = state
 
-        vim.schedule(function()
-            require("yanil/ui").refresh_ui()
-        end)
-    end
+        require("yanil/ui").refresh_ui()
+    end)
 
     local function root_callback(code, _signal, stdout, _stderr)
         if code > 0 then
