@@ -253,6 +253,21 @@ function M.startup(cwd)
     git.update()
 end
 
+function M.close()
+    local winnr = M.tree.winnr()
+    if not winnr then return end
+    api.nvim_win_close(winnr, true)
+end
+
+function M.toggle()
+    local winnr = M.tree.winnr()
+    if not winnr then
+        M.startup()
+    else
+        M.close()
+    end
+end
+
 function M.setup(opts)
     opts = opts or {}
     config.colors.setup()
