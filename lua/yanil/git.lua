@@ -87,6 +87,7 @@ local parsers = {
 
 function M.update()
     local cwd = require("yanil/ui").tree.cwd
+    if not cwd then return end
     if not vim.endswith(cwd, utils.path_sep) then cwd = cwd .. utils.path_sep end
 
     local git_root
