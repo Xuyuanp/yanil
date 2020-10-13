@@ -852,6 +852,8 @@ local exact_matches = {
     ["favicon.ico"] = "fav",
     ["license"] = "license",
     [".gitlab-ci.yml"] = "gitlab",
+    ["go.mod"] = "conf",
+    ["go.sum"] = "conf",
 }
 
 local extension_aliases = {
