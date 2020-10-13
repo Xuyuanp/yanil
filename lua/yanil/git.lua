@@ -99,6 +99,7 @@ function M.update()
 
         local state = {}
 
+        stdout = stdout or ""
         local lines = vim.split(stdout, delimiter)
         local is_rename = false
         for _, line in ipairs(lines) do
