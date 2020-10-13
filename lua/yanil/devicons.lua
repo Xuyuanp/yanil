@@ -786,129 +786,85 @@ local default_devicons = {
         },
         icon = ""
     },
+    procfile = {
+        hl = {
+            ctermfg = "96",
+            guifg = "#834F79"
+        },
+        icon = ""
+    },
+    docker = {
+        hl = {
+            ctermfg = "73",
+            guifg = "#689FB6"
+        },
+        icon = ""
+    },
+    fav = {
+        hl = {
+            ctermfg = "214",
+            guifg = "#F09F17"
+        },
+        icon = ""
+    },
+    license = {
+        hl = {
+            ctermfg = "231",
+            guifg = "#FFFFFF"
+        },
+        icon = ""
+    },
+    gitlab = {
+        hl = {
+            ctermfg = "172",
+            guifg = "#D4843E"
+        },
+        icon = ""
+    },
+}
+
+local exact_matches = {
+    [".bashprofile"] = "bash",
+    [".bashrc"] = "bash",
+    [".profile"] = "bash",
+    [".zshrc"] = "zsh",
+    ["zprofile"] = "zsh",
+    [".zprofile"] = "zsh",
+    [".zlogin"] = "zsh",
+    [".zshenv"] = "zsh",
+    ["vimrc"] = "vim",
+    [".vimrc"] = "vim",
+    [".gvimrc"] = "vim",
+    ["_vimrc"] = "vim",
+    ["_gvimrc"] = "vim",
+    ["rakefile"] = "rb",
+    ["config.ru"] = "rb",
+    ["gemfile"] = "rb",
+    [".gitattributes"] = "conf",
+    [".gitconfig"] = "conf",
+    [".gitignore"] = "conf",
+    ["cmakelists.txt"] = "conf",
+    ["makefile"] = "conf",
+    [".ds_store"] = "conf",
+    ["procfile"] = "procfile",
+    ["docker-compose.yml"] = "docker",
+    ["dockerfile"] = "docker",
+    ["favicon.ico"] = "fav",
+    ["license"] = "license",
+    [".gitlab-ci.yml"] = "gitlab",
+}
+
+local extension_aliases = {
+    ru = "rb",
 }
 
 -- local exact_matches = {
---     [".bashprofile"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     [".bashrc"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     [".ds_store"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     [".gitattributes"] = {
---         icon = ""
---     },
---     [".gitconfig"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     [".gitignore"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     [".gitlab-ci.yml"] = {
---         hl = {
---             ctermfg = "172",
---             guifg = "#D4843E"
---         },
---         icon = ""
---     },
---     [".gvimrc"] = {
---         hl = {
---             ctermfg = "107",
---             guifg = "#8FAA54"
---         },
---         icon = ""
---     },
---     [".vimrc"] = {
---         hl = {
---             ctermfg = "107",
---             guifg = "#8FAA54"
---         },
---         icon = ""
---     },
---     [".zshrc"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     _gvimrc = {
---         hl = {
---             ctermfg = "107",
---             guifg = "#8FAA54"
---         },
---         icon = ""
---     },
---     _vimrc = {
---         hl = {
---             ctermfg = "107",
---             guifg = "#8FAA54"
---         },
---         icon = ""
---     },
---     ["cmakelists.txt"] = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     ["config.ru"] = {
---         icon = ""
---     },
---     ["docker-compose.yml"] = {
---         hl = {
---             ctermfg = "73",
---             guifg = "#689FB6"
---         },
---         icon = ""
---     },
---     dockerfile = {
---         hl = {
---             ctermfg = "73",
---             guifg = "#689FB6"
---         },
---         icon = ""
---     },
 --     dropbox = {
 --         hl = {
 --             ctermfg = "73",
 --             guifg = "#689FB6"
 --         },
 --         icon = ""
---     },
---     ["favicon.ico"] = {
---         hl = {
---             ctermfg = "214",
---             guifg = "#F09F17"
---         },
---         icon = ""
---     },
---     gemfile = {
---         icon = ""
 --     },
 --     ["gruntfile.coffee"] = {
 --         hl = {
@@ -952,20 +908,6 @@ local default_devicons = {
 --         },
 --         icon = ""
 --     },
---     license = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
---     makefile = {
---         hl = {
---             ctermfg = "231",
---             guifg = "#FFFFFF"
---         },
---         icon = ""
---     },
 --     ["mix.lock"] = {
 --         hl = {
 --             ctermfg = "231",
@@ -980,24 +922,12 @@ local default_devicons = {
 --         },
 --         icon = ""
 --     },
---     procfile = {
---         hl = {
---             ctermfg = "96",
---             guifg = "#834F79"
---         },
---         icon = ""
---     },
---     rakefile = {
---         icon = ""
---     },
 -- }
 
 local vim = vim
 local api = vim.api
 
-local M = {
-    devicons = {}
-}
+local M = {}
 
 local function highlight_define(ft, ctermfg, guifg)
     ctermfg = ctermfg or "NONE"
@@ -1019,11 +949,13 @@ function M.setup()
     api.nvim_command("augroup end")
 end
 
-function M.get(_name, ext)
+function M.get(name, ext)
+    ext = exact_matches[name:lower()] or ext
+    ext = extension_aliases[ext] or ext
     local cfg = default_devicons[ext]
-    if not cfg then return end
-
-    return cfg.icon, "YanilDevicons_" .. ext
+    if cfg then
+        return cfg.icon, "YanilDevicons_" .. ext
+    end
 end
 
 function M.decorator()
