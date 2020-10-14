@@ -182,13 +182,13 @@ function DirNode:toggle()
     end
 end
 
-function DirNode:iter()
+function DirNode:iter(loaded)
     local stack = utils.new_stack()
     stack:push(self)
     return function()
         local current_node = stack:pop()
         if not current_node then return end
-        if current_node:is_dir() and current_node.is_open then
+        if current_node:is_dir() and (current_node.is_open or (current_node.is_loaded and loaded)) then
             for index = #current_node.entries, 1, -1 do
                 stack:push(current_node.entries[index])
             end
@@ -197,9 +197,9 @@ function DirNode:iter()
     end
 end
 
-function DirNode:get_nth_node(n)
+function DirNode:get_nth_node(n, loaded)
     local index = 0
-    for node in self:iter() do
+    for node in self:iter(loaded) do
         if index == n then return node end
         index = index + 1
     end
