@@ -245,7 +245,7 @@ function Node:draw(opts, lines, highlights)
             hl_offset = hl_offset + text:len()
         end
     end
-    local display_str = vim.fn.join(symbols, "")
+    local display_str = table.concat(symbols, opts.sep or "")
     table.insert(lines, display_str)
 
     return lines, highlights
