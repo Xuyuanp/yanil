@@ -41,13 +41,6 @@ local default_devicons = {
         },
         icon = ""
     },
-    ["c++"] = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
-    },
     cc = {
         hl = {
             ctermfg = "73",
@@ -216,7 +209,7 @@ local default_devicons = {
         },
         icon = ""
     },
-    ["f#"] = {
+    fsharp = {
         hl = {
             ctermfg = "30",
             guifg = "#44788E"
@@ -291,20 +284,6 @@ local default_devicons = {
             guifg = "#D4843E"
         },
         icon = ""
-    },
-    hh = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
-    },
-    hpp = {
-        hl = {
-            ctermfg = "73",
-            guifg = "#689FB6"
-        },
-        icon = ""
     },
     hrl = {
         hl = {
@@ -821,6 +800,24 @@ local default_devicons = {
         },
         icon = ""
     },
+    excel = {
+        hl = {
+            guifg = "#146C32",
+        },
+        icon = ""
+    },
+    word = {
+        hl = {
+            guifg = "#0E2C7E",
+        },
+        icon = ""
+    },
+    ppt = {
+        hl = {
+            guifg = "#B62B16",
+        },
+        icon = ""
+    },
 }
 
 local exact_matches = {
@@ -837,12 +834,14 @@ local exact_matches = {
     [".gvimrc"] = "vim",
     ["_vimrc"] = "vim",
     ["_gvimrc"] = "vim",
-    ["rakefile"] = "rb",
+    ["rakefile"] = "rake",
     ["config.ru"] = "rb",
     ["gemfile"] = "rb",
     [".gitattributes"] = "conf",
     [".gitconfig"] = "conf",
     [".gitignore"] = "conf",
+    [".dockerignore"] = "conf",
+    [".env"] = "conf",
     ["cmakelists.txt"] = "conf",
     ["makefile"] = "conf",
     [".ds_store"] = "conf",
@@ -858,6 +857,16 @@ local exact_matches = {
 
 local extension_aliases = {
     ru = "rb",
+    ["f#"] = "fsharp",
+    ["c++"] = "cpp",
+    hpp = "h",
+    hh = "h",
+    xls = "excel",
+    xlsx = "excel",
+    doc = "word",
+    docx = "word",
+    ppt = "ppt",
+    pptx = "ppt",
 }
 
 -- local exact_matches = {
