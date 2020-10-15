@@ -114,6 +114,12 @@ function M.open_current_node(cmd)
     if not node then return end
 
     if not node:is_dir() then
+        if node:is_binary() then
+            local choice = vim.fn.input(string.format("Yanil Warning:\n\n%s is a binary file.\nStill open? (yes/No): ", node.abs_path), "No")
+            if choice:lower() ~= "yes" then
+                return
+            end
+        end
         api.nvim_command("wincmd p")
         api.nvim_command(cmd .. " " .. node.abs_path)
         return

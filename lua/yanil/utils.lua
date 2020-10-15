@@ -2,6 +2,8 @@ local vim = vim
 local api = vim.api
 local loop = vim.loop
 
+local validate = vim.validate
+
 local M = {
     path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
     ns_id = api.nvim_create_namespace("Yanil"),
@@ -56,6 +58,18 @@ function M.spawn(path, options, callback)
         if not data then return end
         stderr_chunk = (stderr_chunk or "") .. data
     end)
+end
+
+function M.is_binary(path)
+    validate { path = {path, "string"} }
+
+    local output = vim.fn.system("file --mime-encoding " .. path)
+    if vim.v.shell_error > 0 then
+        api.nvim_err_writeln(string.format("check file %s mime encoding failed: %s", path, output))
+        return
+    end
+
+    return output:find("binary") ~= nil
 end
 
 return M

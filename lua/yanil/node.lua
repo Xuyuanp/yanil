@@ -93,6 +93,12 @@ function FileNode:init()
     self.extension = vim.fn.fnamemodify(self.abs_path, ":e") or ""
 end
 
+function FileNode:is_binary()
+    if self._is_binary ~= nil then return self._is_binary end
+    self._is_binary = utils.is_binary(self.abs_path)
+    return self._is_binary
+end
+
 function LinkNode:init()
     FileNode.init(self)
 
