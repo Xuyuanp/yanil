@@ -187,6 +187,7 @@ local function create_buf()
         bufhidden = "wipe",
         buftype = "nofile",
         modifiable = false,
+        filetype = "Yanil",
     }
     local bufnr = api.nvim_create_buf(false, true)
     api.nvim_buf_set_name(bufnr, M.tree.bufname)
@@ -291,15 +292,6 @@ function M.close()
     local winnr = M.tree.winnr()
     if not winnr then return end
     api.nvim_win_close(winnr, true)
-end
-
-function M.auto_close()
-    local winnr = M.tree.winnr()
-    if not winnr then return end
-    local wins = api.nvim_list_wins()
-    if #wins == 2 then
-        vim.fn.execute("qa!")
-    end
 end
 
 function M.toggle()
