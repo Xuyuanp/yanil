@@ -74,36 +74,7 @@ function M.init(cwd)
 end
 
 function M.set_mappings()
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "<CR>", '<cmd>lua require("yanil/ui").open_current_node()<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "c", '<cmd>lua require("yanil/ui").change_dir_to_current_node()<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "u", '<cmd>lua require("yanil/ui").change_dir_to_parent()<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "r", '<cmd>lua require("yanil/ui").refresh_current_node()<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "i", '<cmd>lua require("yanil/ui").open_current_node("split")<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
-    api.nvim_buf_set_keymap(M.tree.bufnr, "n", "s", '<cmd>lua require("yanil/ui").open_current_node("vsplit")<CR>', {
-        nowait = true,
-        noremap = false,
-        silent = false,
-    })
+    config.keymaps.setup(M.tree.bufnr)
 end
 
 function M.open_current_node(cmd)
@@ -115,8 +86,8 @@ function M.open_current_node(cmd)
 
     if not node:is_dir() then
         if node:is_binary() then
-            local choice = vim.fn.input(string.format("Yanil Warning:\n\n%s is a binary file.\nStill open? (yes/No): ", node.abs_path), "No")
-            if choice:lower() ~= "yes" then
+            local input = vim.fn.input(string.format("Yanil Warning:\n\n%s is a binary file.\nStill open? (yes/No): ", node.abs_path), "No")
+            if input:lower() ~= "yes" then
                 return
             end
         end
@@ -313,7 +284,6 @@ function M.setup(opts)
     opts = opts or {}
     config.colors.setup()
     config.commands.setup()
-    config.keymaps.setup(opts.keymaps)
     git.setup(opts.git)
     devicons.setup()
 end
