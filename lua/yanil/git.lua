@@ -181,6 +181,32 @@ function M.decorator()
     end
 end
 
+function M.diff(node)
+    if M.state[node.abs_path] ~= "Modified" then return end
+
+    return vim.fn.systemlist({"git", "diff", "--patch", "--no-color", "--diff-algorithm=default", node.abs_path})
+end
+
+function M.apply_buf(bufnr)
+    bufnr = bufnr or 0
+    local patch = api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    if not patch or #patch == 0 or (#patch == 1 and patch[1] == "") then
+        vim.fn.execute("q")
+        return
+    end
+    if patch[-1] ~= " " then table.insert(patch, " ") end
+    patch = table.concat(patch, "\n")
+    local output = vim.fn.system({"git", "apply", "--cached"}, patch)
+    if vim.v.shell_error > 0 then
+        api.nvim_err_writeln(string.format("git apply failed: %s", output))
+        return
+    end
+
+    vim.fn.execute("q")
+
+    M.update()
+end
+
 function M.debug()
     print(vim.inspect(M.state))
 end

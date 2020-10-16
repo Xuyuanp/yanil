@@ -11,6 +11,7 @@ local default_mappings = {
     r = "refresh_current_node()",
     i = "open_current_node('split')",
     s = "open_current_node('vsplit')",
+    gd = "git_diff()",
 }
 
 local action_template = "<cmd>lua require('yanil/ui').%s<CR>"
