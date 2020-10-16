@@ -808,7 +808,7 @@ local default_devicons = {
     },
     word = {
         hl = {
-            guifg = "#0E2C7E",
+            guifg = "#025CB9",
         },
         icon = ""
     },
@@ -940,10 +940,14 @@ local api = vim.api
 
 local M = {}
 
+local highlights = {}
+
 local function highlight_define(ft, ctermfg, guifg)
     ctermfg = ctermfg or "NONE"
     guifg = guifg or "NONE"
-    local cmd = string.format("silent hi YanilDevicons_%s ctermfg=%s guifg=%s", ft, ctermfg, guifg)
+    local name = string.format("YanilDevicons_%s", ft)
+    highlights[ft] = name
+    local cmd = string.format("silent hi %s ctermfg=%s guifg=%s", name, ctermfg, guifg)
     api.nvim_command(cmd)
 end
 
@@ -960,12 +964,18 @@ function M.setup()
     api.nvim_command("augroup end")
 end
 
+local function check_specials(name)
+    if vim.endswith(name, "rc") then return "conf" end
+end
+
 function M.get(name, ext)
+    ext = ext ~= "" and ext or nil
     ext = exact_matches[name:lower()] or ext
     ext = extension_aliases[ext] or ext
+    ext = ext or check_specials(name)
     local cfg = default_devicons[ext]
     if cfg then
-        return cfg.icon, "YanilDevicons_" .. ext
+        return cfg.icon, highlights[ext]
     end
 end
 
