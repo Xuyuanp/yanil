@@ -285,6 +285,46 @@ function DirNode:get_last_entry()
     if #self.entries > 0 then return self.entries[#self.entries] end
 end
 
+function DirNode:dump_state()
+    local opened_dirs = {}
+    local loaded_dirs = {}
+    for node in self:iter(true) do
+        if node:is_dir() then
+            if node.is_loaded then
+                loaded_dirs[node.abs_path] = true
+                if node.is_open then opened_dirs[node.abs_path] = true end
+            end
+        end
+    end
+    return {
+        opened_dirs = opened_dirs,
+        loaded_dirs = loaded_dirs,
+    }
+end
+
+function DirNode:load_state(state)
+    state = state or {}
+    local loaded_dirs = state.loaded_dirs or {}
+    local opened_dirs = state.opened_dirs or {}
+
+    local function open_dirs(dir)
+        if not dir:is_dir() then return end
+        if not dir.is_loaded and loaded_dirs[dir.abs_path] then
+            dir:load()
+        end
+        if dir.is_open then
+            if not opened_dirs[dir.abs_path] then dir:close() end
+        else
+            if opened_dirs[dir.abs_path] then dir:open() end
+        end
+        for _, child in ipairs(dir.entries) do
+            if child:is_dir() then open_dirs(child) end
+        end
+    end
+
+    open_dirs(self)
+end
+
 return {
     Dir = DirNode,
     File = FileNode,

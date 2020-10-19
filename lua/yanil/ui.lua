@@ -212,36 +212,11 @@ function M.refresh_ui()
 
     local cursor = api.nvim_win_get_cursor(winnr)
 
-    local opened_dirs = {}
-    local loaded_dirs = {}
-    for node in M.tree.root:iter(true) do
-        if node:is_dir() then
-            if node.is_loaded then
-                loaded_dirs[node.abs_path] = true
-                if node.is_open then
-                    opened_dirs[node.abs_path] = true
-                end
-            end
-        end
-    end
+    local state = M.tree.root:dump_state()
 
     M.init(M.tree.cwd)
 
-    local function open_dirs(dir)
-        if not dir:is_dir() then return end
-        if not dir.is_loaded and loaded_dirs[dir.abs_path] then
-            dir:load()
-        end
-        if dir.is_open then
-            if not opened_dirs[dir.abs_path] then dir:close() end
-        else
-            if opened_dirs[dir.abs_path] then dir:open() end
-        end
-        for _, child in ipairs(dir.entries) do
-            if child:is_dir() then open_dirs(child) end
-        end
-    end
-    open_dirs(M.tree.root)
+    M.tree.root:load_state(state)
 
     M.draw()
 

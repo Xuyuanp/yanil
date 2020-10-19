@@ -7,6 +7,8 @@ local validate = vim.validate
 local M = {
     path_sep = loop.os_uname().sysname == "Windows" and "\\" or "/",
     ns_id = api.nvim_create_namespace("Yanil"),
+
+    callbacks = {}
 }
 
 function M.new_stack()
@@ -70,6 +72,30 @@ function M.is_binary(path)
     end
 
     return output:find("binary") ~= nil
+end
+
+function M.callback(key, ...)
+    if not M.callbacks[key] then return end
+    M.callbacks[key](...)
+end
+
+function M.register_callback(key, callback)
+    validate {
+        key = {key, "s"},
+        callback = {callback, "f"}
+    }
+    M.callbacks[key] = callback
+end
+
+function M.buf_set_keymap(bufnr, mode, key, callback, opts)
+    opts = vim.tbl_extend("force", {
+        silent = false,
+        noremap = false,
+        nowait = true,
+    }, opts or {})
+    local callback_id = string.format("%d-%s-%s", bufnr, mode, key:gsub("<", ""):gsub(">", ""))
+    M.register_callback(callback_id, callback)
+    api.nvim_buf_set_keymap(bufnr, mode, key, string.format([[<cmd>lua require("yanil/utils").callback("%s")<CR>]], callback_id), opts)
 end
 
 return M
