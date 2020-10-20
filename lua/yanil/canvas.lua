@@ -74,19 +74,16 @@ end
 
 function M.draw()
     local linenr = 0
-    local bufnr = M.bufnr
 
-    api.nvim_buf_set_option(bufnr, "modifiable", true)
+    M.in_edit_mode(function()
+        for _, section in ipairs(M.sections) do
+            local texts, highlights = section:draw()
 
-    for _, section in ipairs(M.sections) do
-        local texts, highlights = section:draw()
+            M.apply_changes(linenr, texts, highlights)
 
-        M.apply_changes(linenr, texts, highlights)
-
-        linenr = linenr + section:lens_displayed()
-    end
-
-    api.nvim_buf_set_option(bufnr, "modifiable", false)
+            linenr = linenr + section:lens_displayed()
+        end
+    end)
 end
 
 function M.apply_changes(linenr, texts, highlights)
@@ -105,16 +102,21 @@ function M.apply_changes(linenr, texts, highlights)
 end
 
 function M.section_on_key(linenr, key)
-    local relative_linenr = linenr
     for _, section in ipairs(M.sections) do
         local line_end = section:lens_displayed()
 
-        if relative_linenr < line_end then
-            return section:on_key(relative_linenr, key)
+        if linenr < line_end then
+            return section:on_key(linenr, key)
         end
 
-        relative_linenr = relative_linenr - line_end
+        linenr = linenr - line_end
     end
+end
+
+function M.in_edit_mode(fn)
+    api.nvim_buf_set_option(M.bufnr, "modifiable", true)
+    pcall(fn)
+    api.nvim_buf_set_option(M.bufnr, "modifiable", false)
 end
 
 local function test()
@@ -145,11 +147,10 @@ local function test()
         local cursor = api.nvim_win_get_cursor(0)
         local linenr = cursor[1] - 1
         local texts, highlights = M.section_on_key(linenr, "<CR>")
-        if texts or highlights then
-            api.nvim_buf_set_option(M.bufnr, "modifiable", true)
+        if not texts and not highlights then return end
+        M.in_edit_mode(function()
             M.apply_changes(linenr, texts, highlights)
-            api.nvim_buf_set_option(M.bufnr, "modifiable", false)
-        end
+        end)
     end)
 end
 
