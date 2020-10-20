@@ -1,13 +1,3 @@
--- Section
---  setup(opts)
---  on_enter()
---  on_exit()
---  draw() -> texts, highlights
---    texts: { line_start = 0, line_end = 10, lines = { } }
---    highlights: { line = 10, col_start = 0, col_end = 3, hl_group = "Red" }
---  on_key(linenr, key)
---  ui_lens() -> number
-
 local M = {}
 
 function M:new(o)
@@ -25,16 +15,16 @@ end
 function M:setup(_opts)
 end
 
-function M:on_enter()
-end
+local hooks = {
+    "on_enter",
+    "on_leave"
+}
 
-function M:on_exit()
-end
-
-function M:on_reveal()
-end
-
-function M:on_hide()
+do
+    for _, hook in ipairs(hooks) do
+        M[hook] = function(_self)
+        end
+    end
 end
 
 function M:draw()

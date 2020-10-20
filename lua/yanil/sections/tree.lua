@@ -35,6 +35,14 @@ function M:lens_displayed()
     return self.root:total_lines()
 end
 
+function M:on_enter()
+    if self.dir_state then self.root:load_state(self.dir_state) end
+end
+
+function M:on_leave()
+    self.dir_state = self.root:dump_state()
+end
+
 function M:on_key(linenr, key)
     local node = self.root:get_nth_node(linenr)
     if not node then return end

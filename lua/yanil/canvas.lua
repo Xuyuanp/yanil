@@ -34,12 +34,57 @@ local win_options = {
 
 function M.setup(opts)
     M.sections = opts.sections
+
+    M.set_autocmds({
+        {
+            event = "BufEnter",
+            cmd = M.on_enter,
+        },
+        {
+            event = "BufLeave",
+            cmd = M.on_leave
+        },
+    })
+end
+
+function M.on_enter()
+    for _, section in ipairs(M.sections) do
+        section:on_enter()
+    end
+end
+
+function M.on_leave()
+    print("canvas bufleave")
+    for _, section in ipairs(M.sections) do
+        section:on_leave()
+    end
+    M.cursor = api.nvim_win_get_cursor(M.winnr())
+end
+
+function M.set_autocmds(autocmds)
+    api.nvim_command("augroup yanil_convas")
+    api.nvim_command("autocmd!")
+
+    for _, autocmd in ipairs(autocmds) do
+        local pattern = autocmd.pattern or "Yanil"
+        local cb_key = string.format("canvas_%s_%s", autocmd.event, pattern)
+        utils.register_callback(cb_key, autocmd.cmd)
+        local t = {"autocmd", autocmd.event, pattern}
+        if autocmd.once then table.insert(t, "++once") end
+        if autocmd.nested then table.insert(t, "++nested") end
+        table.insert(t, string.format([[lua require("yanil/utils").callback("%s")]], cb_key))
+        api.nvim_command(table.concat(t, " "))
+    end
+
+    api.nvim_command("augroup end")
 end
 
 function M.winnr()
     for _, winnr in ipairs(api.nvim_list_wins()) do
         local bufname = api.nvim_buf_get_name(api.nvim_win_get_buf(winnr))
-        if bufname == M.bufname then return winnr end
+        if bufname:match(".*/"..M.bufname.."$") then
+            return winnr
+        end
     end
 end
 
@@ -70,6 +115,25 @@ function M.open()
 
     M.bufnr = create_buf(M.bufname)
     create_win(M.bufnr)
+
+    -- TODO: how to trigger bufenter?
+    M.on_enter()
+
+    M.draw()
+
+    utils.buf_set_keymap(M.bufnr, "n", "<CR>", function()
+        local cursor = api.nvim_win_get_cursor(0)
+        local linenr = cursor[1] - 1
+        local texts, highlights = M.section_on_key(linenr, "<CR>")
+        if not texts and not highlights then return end
+        M.in_edit_mode(function()
+            M.apply_changes(linenr, texts, highlights)
+        end)
+    end)
+
+    if M.cursor then
+        api.nvim_win_set_cursor(M.winnr(), M.cursor)
+    end
 end
 
 function M.draw()
@@ -119,7 +183,7 @@ function M.in_edit_mode(fn)
     api.nvim_buf_set_option(M.bufnr, "modifiable", false)
 end
 
-local function test()
+function M.mock_init()
     local tree = require("yanil/sections/tree"):new()
     tree:setup {
         decorators = {
@@ -138,22 +202,6 @@ local function test()
             tree,
         }
     }
-
-    M.open()
-
-    M.draw()
-
-    utils.buf_set_keymap(M.bufnr, "n", "<CR>", function()
-        local cursor = api.nvim_win_get_cursor(0)
-        local linenr = cursor[1] - 1
-        local texts, highlights = M.section_on_key(linenr, "<CR>")
-        if not texts and not highlights then return end
-        M.in_edit_mode(function()
-            M.apply_changes(linenr, texts, highlights)
-        end)
-    end)
 end
-
-test()
 
 return M
