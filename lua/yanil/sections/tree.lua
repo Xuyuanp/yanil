@@ -39,7 +39,7 @@ function M:on_key(linenr, key)
     local node = self.root:get_nth_node(linenr)
     if not node then return end
 
-    return M:node_on_key(node, key)
+    return self:node_on_key(node, key)
 end
 
 function M:node_on_key(node, key)
