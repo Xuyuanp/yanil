@@ -18,7 +18,7 @@ function M:setup(opts)
 
     -- TODO: is here the right place?
     require("yanil/canvas").register_hooks {
-        on_leave = function() self:on_leave() end,
+        on_exit = function() self:on_exit() end,
         on_open = function(cwd) self:on_open(cwd) end,
     }
 end
@@ -67,10 +67,7 @@ function M:on_open(cwd)
     self:set_cwd(cwd)
 end
 
-function M:on_enter()
-end
-
-function M:on_leave()
+function M:on_exit()
     self.dir_state = self.root:dump_state()
 end
 
