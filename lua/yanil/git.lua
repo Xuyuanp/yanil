@@ -132,12 +132,10 @@ function M.update(cwd)
             end
         end
 
-        -- TODO: compare states
-        M.state = state
-
-        api.nvim_command("doautocmd User YanilGitStatusChanged")
-
-        -- require("yanil/ui").refresh_ui()
+        if not utils.table_equal(M.state, state) then
+            M.state = state
+            api.nvim_command("doautocmd User YanilGitStatusChanged")
+        end
     end)
 
     local function root_callback(code, _signal, stdout, _stderr)

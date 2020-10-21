@@ -118,4 +118,26 @@ function M.set_autocmds(group, autocmds)
     api.nvim_command("augroup end")
 end
 
+function M.table_equal(t1, t2)
+    validate {
+        t1 = {t1, "t"},
+        t2 = {t2, "t"},
+    }
+    if vim.tbl_count(t1) ~= vim.tbl_count(t2) then return false end
+
+    for k, v1 in pairs(t1) do
+        local v2 = t2[k]
+        local type1, type2 = type(v1), type(v2)
+        if type1 ~= type2 then return false end
+
+        if type1 == "table" then
+            if not M.table_equal(v1, t2) then return false end
+        end
+
+        if v1 ~= v2 then return false end
+    end
+
+    return true
+end
+
 return M
