@@ -1,13 +1,20 @@
 local vim = vim
 local api = vim.api
 
-local decorators = require("yanil/decorators")
-local devicons   = require("yanil/devicons")
-local utils      = require("yanil/utils")
+local utils = require("yanil/utils")
+
+local validate = vim.validate
+
+-- hooks
+-- on_open(cwd)
+-- on_exit()
+-- on_enter()
+-- on_leave()
 
 local M = {
     bufnr = nil,
-    bufname = "Yanil"
+    bufname = "Yanil",
+    hooks = {}
 }
 
 local buffer_options = {
@@ -35,7 +42,11 @@ local win_options = {
 function M.setup(opts)
     M.sections = opts.sections
 
-    M.set_autocmds({
+    for _, section in ipairs(M.sections) do
+        section:set_post_changes_fn(M.on_section_changed)
+    end
+
+    utils.set_autocmds("yanil_canvas", {
         {
             event = "BufEnter",
             cmd = M.on_enter,
@@ -44,39 +55,33 @@ function M.setup(opts)
             event = "BufLeave",
             cmd = M.on_leave
         },
+        {
+            event = "BufWipeout",
+            cmd = M.on_exit
+        }
     })
+
+    if opts.autocmds then
+        utils.set_autocmds("yanil_canvas_custom", opts.autocmds)
+    end
 end
 
 function M.on_enter()
-    for _, section in ipairs(M.sections) do
-        section:on_enter()
-    end
+    M.trigger_hook("on_enter")
 end
 
 function M.on_leave()
-    print("canvas bufleave")
-    for _, section in ipairs(M.sections) do
-        section:on_leave()
-    end
-    M.cursor = api.nvim_win_get_cursor(M.winnr())
+    M.trigger_hook("on_leave")
 end
 
-function M.set_autocmds(autocmds)
-    api.nvim_command("augroup yanil_convas")
-    api.nvim_command("autocmd!")
+function M.on_open(cwd)
+    M.trigger_hook("on_open", cwd)
+end
 
-    for _, autocmd in ipairs(autocmds) do
-        local pattern = autocmd.pattern or "Yanil"
-        local cb_key = string.format("canvas_%s_%s", autocmd.event, pattern)
-        utils.register_callback(cb_key, autocmd.cmd)
-        local t = {"autocmd", autocmd.event, pattern}
-        if autocmd.once then table.insert(t, "++once") end
-        if autocmd.nested then table.insert(t, "++nested") end
-        table.insert(t, string.format([[lua require("yanil/utils").callback("%s")]], cb_key))
-        api.nvim_command(table.concat(t, " "))
-    end
+function M.on_exit()
+    M.trigger_hook("on_exit")
 
-    api.nvim_command("augroup end")
+    M.cursor = api.nvim_win_get_cursor(M.winnr())
 end
 
 function M.winnr()
@@ -110,14 +115,13 @@ local function create_win(bufnr)
     end
 end
 
-function M.open()
+function M.open(cwd)
     if M.winnr() then return end
 
     M.bufnr = create_buf(M.bufname)
     create_win(M.bufnr)
 
-    -- TODO: how to trigger bufenter?
-    M.on_enter()
+    M.on_open(cwd)
 
     M.draw()
 
@@ -133,6 +137,25 @@ function M.open()
 
     if M.cursor then
         api.nvim_win_set_cursor(M.winnr(), M.cursor)
+    end
+
+    -- TODO: how to trigger bufenter?
+    M.on_enter()
+end
+
+function M.close()
+    local winnr = M.winnr()
+    if not winnr then return end
+
+    api.nvim_win_close(winnr, true)
+end
+
+function M.toggle()
+    local winnr = M.winnr()
+    if not winnr then
+        M.open()
+    else
+        M.close()
     end
 end
 
@@ -150,7 +173,7 @@ function M.draw()
     end)
 end
 
-function M.apply_changes(linenr, texts, highlights)
+function M.apply_changes(linenr, texts, highlights, cursor)
     local bufnr = M.bufnr
     texts = texts or {}
     if not vim.tbl_islist(texts) then texts = { texts } end
@@ -163,6 +186,8 @@ function M.apply_changes(linenr, texts, highlights)
     for _, hl in ipairs(highlights) do
         api.nvim_buf_add_highlight(bufnr, hl.ns_id or utils.ns_id, hl.hl_group, linenr + hl.line, hl.col_start, hl.col_end)
     end
+
+    if cursor then api.nvim_win_set_cursor(M.winnr(), cursor) end
 end
 
 function M.section_on_key(linenr, key)
@@ -177,31 +202,52 @@ function M.section_on_key(linenr, key)
     end
 end
 
+function M.get_section_start_linenr(section)
+    local linenr = 0
+    for _, sec in ipairs(M.sections) do
+        if sec == section then return linenr end
+        linenr = linenr + sec:lens_displayed()
+    end
+end
+
+function M.on_section_changed(section, texts, highlights)
+    local linenr = M.get_section_start_linenr(section)
+    if not linenr then error("no such section: " .. section.name) end
+
+    if not (texts or highlights) then return end
+
+    M.in_edit_mode(function()
+        M.apply_changes(linenr, texts, highlights)
+    end)
+end
+
 function M.in_edit_mode(fn)
     api.nvim_buf_set_option(M.bufnr, "modifiable", true)
-    pcall(fn)
+    local ok, err = pcall(fn)
+    if not ok then api.nvim_err_writeln(err) end
     api.nvim_buf_set_option(M.bufnr, "modifiable", false)
 end
 
-function M.mock_init()
-    local tree = require("yanil/sections/tree"):new()
-    tree:setup {
-        decorators = {
-            decorators.pretty_indent_with_git,
-            devicons.decorator(),
-            decorators.space,
-            decorators.default,
-            decorators.executable,
-            decorators.readonly,
-            decorators.link_to,
-        }
+function M.register_hook(name, fn)
+    validate {
+        name = { name, "s" },
+        fn = { fn, "f" }
     }
-    M.setup {
-        sections = {
-            require("yanil/sections/header"):new(),
-            tree,
-        }
-    }
+    local fns = M.hooks[name] or {}
+    table.insert(fns, fn)
+    M.hooks[name] = fns
+end
+
+function M.register_hooks(hooks)
+    for name, fn in pairs(hooks) do
+        M.register_hook(name, fn)
+    end
+end
+
+function M.trigger_hook(name, ...)
+    for _, fn in ipairs(M.hooks[name] or {}) do
+        fn(...)
+    end
 end
 
 return M

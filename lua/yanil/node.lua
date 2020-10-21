@@ -329,5 +329,5 @@ return {
     Dir = DirNode,
     File = FileNode,
     Link = LinkNode,
-    LinkDirNode = LinkDirNode,
+    LinkDir = LinkDirNode,
 }

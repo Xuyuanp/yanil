@@ -98,4 +98,24 @@ function M.buf_set_keymap(bufnr, mode, key, callback, opts)
     api.nvim_buf_set_keymap(bufnr, mode, key, string.format([[<cmd>lua require("yanil/utils").callback("%s")<CR>]], callback_id), opts)
 end
 
+function M.set_autocmds(group, autocmds)
+    api.nvim_command("augroup " .. group)
+    api.nvim_command("autocmd!")
+
+    for _, autocmd in ipairs(autocmds or {}) do
+        local pattern = autocmd.pattern or "Yanil"
+        local cb_key = string.format("%s_%s_%s", group, autocmd.event, pattern)
+        M.register_callback(cb_key, autocmd.cmd)
+
+        local t = {"autocmd", autocmd.event, pattern}
+        if autocmd.once then table.insert(t, "++once") end
+        if autocmd.nested then table.insert(t, "++nested") end
+        table.insert(t, string.format([[lua require("yanil/utils").callback("%s")]], cb_key))
+
+        api.nvim_command(table.concat(t, " "))
+    end
+
+    api.nvim_command("augroup end")
+end
+
 return M

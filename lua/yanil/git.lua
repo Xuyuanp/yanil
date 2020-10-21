@@ -1,5 +1,6 @@
 local vim = vim
 local api = vim.api
+local loop = vim.loop
 
 local utils = require("yanil/utils")
 
@@ -86,8 +87,8 @@ local parsers = {
     end,
 }
 
-function M.update()
-    local cwd = require("yanil/ui").tree.cwd
+function M.update(cwd)
+    cwd = cwd or loop.cwd()
     if not cwd then return end
     if not vim.endswith(cwd, utils.path_sep) then cwd = cwd .. utils.path_sep end
 
@@ -131,9 +132,12 @@ function M.update()
             end
         end
 
+        -- TODO: compare states
         M.state = state
 
-        require("yanil/ui").refresh_ui()
+        api.nvim_command("doautocmd User YanilGitStatusChanged")
+
+        -- require("yanil/ui").refresh_ui()
     end)
 
     local function root_callback(code, _signal, stdout, _stderr)

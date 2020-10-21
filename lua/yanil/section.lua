@@ -17,7 +17,8 @@ end
 
 local hooks = {
     "on_enter",
-    "on_leave"
+    "on_leave",
+    "on_exit",
 }
 
 do
@@ -37,6 +38,10 @@ end
 
 function M:on_key(linenr, key)
     print("section", self.name, "handled key", key, "pressed event on line", linenr)
+end
+
+function M:set_post_changes_fn(fn)
+    self.post_changes = fn
 end
 
 return M

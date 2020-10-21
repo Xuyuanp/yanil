@@ -957,7 +957,7 @@ function M.setup_highlight()
     end
 end
 
-function M.setup()
+function M.setup(_opts)
     api.nvim_command("augroup yanil_devicons_highlight")
     api.nvim_command("autocmd!")
     api.nvim_command("autocmd ColorScheme * lua require('yanil/devicons').setup_highlight()")
