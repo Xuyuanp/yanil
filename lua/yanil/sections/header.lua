@@ -18,7 +18,7 @@ function M:draw()
     return texts, highlights
 end
 
-function M:lens_displayed()
+function M:total_lines()
     return 2
 end
 

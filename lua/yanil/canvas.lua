@@ -14,7 +14,8 @@ local validate = vim.validate
 local M = {
     bufnr = nil,
     bufname = "Yanil",
-    hooks = {}
+    hooks = {},
+    keys = {},
 }
 
 local buffer_options = {
@@ -44,6 +45,11 @@ function M.setup(opts)
 
     for _, section in ipairs(M.sections) do
         section:set_post_changes_fn(M.on_section_changed)
+        for _, key in ipairs(section:watching_keys() or {}) do
+            local section_names = M.keys[key] or {}
+            table.insert(section_names, section.name)
+            M.keys[key] = section_names
+        end
     end
 
     utils.set_autocmds("yanil_canvas", {
@@ -115,6 +121,25 @@ local function create_win(bufnr)
     end
 end
 
+function M.get_current_linenr()
+    local winnr = M.winnr()
+    if not winnr then return end
+    return api.nvim_win_get_cursor(winnr)[1] - 1
+end
+
+function M.set_keymaps()
+    for key, section_names in pairs(M.keys) do
+        utils.buf_set_keymap(M.bufnr, "n", key, function()
+            local linenr = M.get_current_linenr()
+            local texts, highlights, cursor = M.section_on_key(linenr, key)
+            if not (texts or highlights or cursor) then return end
+            M.in_edit_mode(function()
+                M.apply_changes(linenr, texts, highlights, cursor)
+            end)
+        end)
+    end
+end
+
 function M.open(cwd)
     if M.winnr() then return end
 
@@ -125,15 +150,7 @@ function M.open(cwd)
 
     M.draw()
 
-    utils.buf_set_keymap(M.bufnr, "n", "<CR>", function()
-        local cursor = api.nvim_win_get_cursor(0)
-        local linenr = cursor[1] - 1
-        local texts, highlights = M.section_on_key(linenr, "<CR>")
-        if not texts and not highlights then return end
-        M.in_edit_mode(function()
-            M.apply_changes(linenr, texts, highlights)
-        end)
-    end)
+    M.set_keymaps()
 
     if M.cursor then
         api.nvim_win_set_cursor(M.winnr(), M.cursor)
@@ -168,7 +185,7 @@ function M.draw()
 
             M.apply_changes(linenr, texts, highlights)
 
-            linenr = linenr + section:lens_displayed()
+            linenr = linenr + section:total_lines()
         end
     end)
 end
@@ -192,7 +209,7 @@ end
 
 function M.section_on_key(linenr, key)
     for _, section in ipairs(M.sections) do
-        local line_end = section:lens_displayed()
+        local line_end = section:total_lines()
 
         if linenr < line_end then
             return section:on_key(linenr, key)
@@ -206,18 +223,18 @@ function M.get_section_start_linenr(section)
     local linenr = 0
     for _, sec in ipairs(M.sections) do
         if sec == section then return linenr end
-        linenr = linenr + sec:lens_displayed()
+        linenr = linenr + sec:total_lines()
     end
 end
 
-function M.on_section_changed(section, texts, highlights)
+function M.on_section_changed(section, texts, highlights, cursor)
     local linenr = M.get_section_start_linenr(section)
     if not linenr then error("no such section: " .. section.name) end
 
-    if not (texts or highlights) then return end
+    if not (texts or highlights or cursor) then return end
 
     M.in_edit_mode(function()
-        M.apply_changes(linenr, texts, highlights)
+        M.apply_changes(linenr, texts, highlights, cursor)
     end)
 end
 

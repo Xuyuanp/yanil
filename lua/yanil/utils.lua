@@ -63,7 +63,7 @@ function M.spawn(path, options, callback)
 end
 
 function M.is_binary(path)
-    validate { path = {path, "string"} }
+    validate { path = { path, "string" } }
 
     local output = vim.fn.system("file --mime-encoding " .. path)
     if vim.v.shell_error > 0 then
@@ -93,9 +93,11 @@ function M.buf_set_keymap(bufnr, mode, key, callback, opts)
         noremap = false,
         nowait = true,
     }, opts or {})
-    local callback_id = string.format("%d-%s-%s", bufnr, mode, key:gsub("<", ""):gsub(">", ""))
-    M.register_callback(callback_id, callback)
-    api.nvim_buf_set_keymap(bufnr, mode, key, string.format([[<cmd>lua require("yanil/utils").callback("%s")<CR>]], callback_id), opts)
+
+    local cb_key = string.format("keymap-%s-%s", mode, key:gsub("<", ""):gsub(">", ""))
+
+    M.register_callback(cb_key, callback)
+    api.nvim_buf_set_keymap(bufnr, mode, key, string.format([[<cmd>lua require("yanil/utils").callback("%s")<CR>]], cb_key), opts)
 end
 
 function M.set_autocmds(group, autocmds)
