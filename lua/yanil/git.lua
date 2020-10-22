@@ -133,8 +133,11 @@ function M.update(cwd)
         end
 
         if not utils.table_equal(M.state, state) then
+            M.prev_state = M.state
             M.state = state
-            api.nvim_command("doautocmd User YanilGitStatusChanged")
+            if vim.fn.exists("#User#YanilGitStatusChanged") then
+                api.nvim_command("doautocmd User YanilGitStatusChanged")
+            end
         end
     end)
 
