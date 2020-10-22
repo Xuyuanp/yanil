@@ -192,6 +192,23 @@ function M.draw()
     end)
 end
 
+--- apply changes to canvas
+---@param linenr number: Base line number
+---@param changes table: Map of change descriptions. K-Vs are in these form:
+---  texts: (optional)
+---    table or list of table:
+---      line_start: first relative line index (inclusive)
+---      line_end: last relative line index (exclusive)
+---      lines: array of lines to use as replacement
+---  highlights: (optional)
+---    table or list of table:
+---      ns_id: highlight namespace id (optional)
+---      hl_group: highlight group name
+---      col_start: start of column number (inclusive)
+---      col_end: end of column number (exclusive)
+---  cursor: (optional)
+---    line: relative lines to move cursor (optional)
+---    col: relative columns to move cursor (optional)
 function M.apply_changes(linenr, changes)
     if not changes then return end
     local bufnr = M.bufnr
@@ -209,8 +226,12 @@ function M.apply_changes(linenr, changes)
 
     local cursor = changes.cursor
     if cursor then
-        local real_cursor = { linenr + cursor[1], cursor[2] }
-        api.nvim_win_set_cursor(M.winnr(), real_cursor)
+        local winnr = M.winnr()
+        local current_cursor = api.nvim_win_get_cursor(winnr)
+        api.nvim_win_set_cursor(M.winnr(), {
+            current_cursor[1] + (cursor.line or 0),
+            current_cursor[2] + (cursor.col or 0),
+        })
     end
 end
 
