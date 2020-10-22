@@ -92,11 +92,18 @@ function M.pretty_indent_with_git(node)
     if git_icon then
         local suffix_len = vim.endswith(text, "╴ ") and 4 or 2
         text = text:sub(0, -(suffix_len + 1)) .. git_icon .. " "
-        table.insert(hls, {
-            col_start = text:len() - git_icon:len() - 1,
-            col_end = text:len() - 1,
-            hl_group = git_hl,
-        })
+        hls = {
+            {
+                col_start = 0,
+                col_end = text:len() - git_icon:len() - 1,
+                hl_group = hl,
+            },
+            {
+                col_start = text:len() - git_icon:len() - 1,
+                col_end = text:len() - 1,
+                hl_group = git_hl,
+            },
+        }
     end
     return text, hls
 end
