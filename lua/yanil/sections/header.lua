@@ -14,8 +14,9 @@ function M:draw()
             "",
         }
     }
-    local highlights = {}
-    return texts, highlights
+    return {
+        texts = texts
+    }
 end
 
 function M:total_lines()

@@ -131,10 +131,12 @@ function M.set_keymaps()
     for key, section_names in pairs(M.keys) do
         utils.buf_set_keymap(M.bufnr, "n", key, function()
             local linenr = M.get_current_linenr()
-            local texts, highlights, cursor = M.section_on_key(linenr, key)
-            if not (texts or highlights or cursor) then return end
+            local section, relative_linenr = M.get_section_on_linenr(linenr)
+            if not section or not vim.tbl_contains(section_names, section.name) then return end
+
+            local changes = section:on_key(relative_linenr, key)
             M.in_edit_mode(function()
-                M.apply_changes(linenr, texts, highlights, cursor)
+                M.apply_changes(linenr, changes)
             end)
         end)
     end
@@ -181,38 +183,43 @@ function M.draw()
 
     M.in_edit_mode(function()
         for _, section in ipairs(M.sections) do
-            local texts, highlights = section:draw()
+            local changes = section:draw()
 
-            M.apply_changes(linenr, texts, highlights)
+            M.apply_changes(linenr, changes)
 
             linenr = linenr + section:total_lines()
         end
     end)
 end
 
-function M.apply_changes(linenr, texts, highlights, cursor)
+function M.apply_changes(linenr, changes)
+    if not changes then return end
     local bufnr = M.bufnr
-    texts = texts or {}
+    local texts = changes.texts or {}
     if not vim.tbl_islist(texts) then texts = { texts } end
     for _, text in ipairs(texts) do
         api.nvim_buf_set_lines(bufnr, linenr + text.line_start, linenr + text.line_end, false, text.lines)
     end
 
-    highlights = highlights or {}
+    local highlights = changes.highlights or {}
     if not vim.tbl_islist(highlights) then highlights = { highlights } end
     for _, hl in ipairs(highlights) do
         api.nvim_buf_add_highlight(bufnr, hl.ns_id or utils.ns_id, hl.hl_group, linenr + hl.line, hl.col_start, hl.col_end)
     end
 
-    if cursor then api.nvim_win_set_cursor(M.winnr(), cursor) end
+    local cursor = changes.cursor
+    if cursor then
+        local real_cursor = { linenr + cursor[1], cursor[2] }
+        api.nvim_win_set_cursor(M.winnr(), real_cursor)
+    end
 end
 
-function M.section_on_key(linenr, key)
+function M.get_section_on_linenr(linenr)
     for _, section in ipairs(M.sections) do
         local line_end = section:total_lines()
 
         if linenr < line_end then
-            return section:on_key(linenr, key)
+            return section, linenr
         end
 
         linenr = linenr - line_end
@@ -227,14 +234,12 @@ function M.get_section_start_linenr(section)
     end
 end
 
-function M.on_section_changed(section, texts, highlights, cursor)
+function M.on_section_changed(section, changes)
     local linenr = M.get_section_start_linenr(section)
     if not linenr then error("no such section: " .. section.name) end
 
-    if not (texts or highlights or cursor) then return end
-
     M.in_edit_mode(function()
-        M.apply_changes(linenr, texts, highlights, cursor)
+        M.apply_changes(linenr, changes)
     end)
 end
 

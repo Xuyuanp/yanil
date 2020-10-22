@@ -66,7 +66,10 @@ function M:draw()
         line_end = #lines,
         lines = lines
     }}
-    return texts, highlights
+    return {
+        texts = texts,
+        highlights = highlights
+    }
 end
 
 function M:total_lines()
@@ -120,10 +123,13 @@ function M:open_node(node)
 
     local lines, highlights = node:draw(self.draw_opts)
     return {
-        line_start = 0,
-        line_end = total_lines,
-        lines = lines,
-    }, highlights
+        texts = {
+            line_start = 0,
+            line_end = total_lines,
+            lines = lines,
+        },
+        highlights = highlights
+    }
 end
 
 function M:cd_to_node(node)
@@ -146,7 +152,10 @@ function M:cd_to_path(path)
         line_end = total_lines,
         lines = lines,
     }}
-    self:post_changes(texts, highlights)
+    self:post_changes {
+        texts = texts,
+        highlights = highlights,
+    }
 end
 
 return M
