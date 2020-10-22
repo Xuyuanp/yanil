@@ -7,6 +7,7 @@ function M.default(node)
     local hl_group = "YanilTreeFile"
     if node:is_dir() then
         if not node.parent then
+            text = vim.fn.pathshorten(vim.fn.fnamemodify(node.name, ":~:h"))
             hl_group = "YanilTreeRoot"
         else
             hl_group = node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
