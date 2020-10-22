@@ -213,6 +213,32 @@ function M.apply_buf(bufnr)
     M.update()
 end
 
+function M.jump(tree, linenr, step)
+    local total_lines = tree:total_lines()
+    local start, total = step, step * total_lines
+    for i = start, total, step do
+        local index = (i + linenr) % total_lines
+        local node = tree.root:get_nth_node(index) -- TODO: optimaze
+        if node.parent and M.get_icon_and_hl(node.abs_path) then
+            tree:post_changes {
+                cursor = {
+                    line = index - linenr
+                }
+            }
+            return
+        end
+    end
+end
+
+function M.jump_next(tree, _node, _key, linenr)
+    M.jump(tree, linenr, 1)
+end
+
+function M.jump_prev(tree, _node, _key, linenr)
+    M.jump(tree, linenr, -1)
+end
+
+
 function M.debug()
     print(vim.inspect(M.state))
 end

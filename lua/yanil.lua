@@ -35,6 +35,10 @@ function M.apply_authors_config()
                 decorators.link_to,
             }
         },
+        keymaps = {
+            ["]c"] = git.jump_next,
+            ["[c"] = git.jump_prev,
+        }
     }
 
     canvas.register_hooks {

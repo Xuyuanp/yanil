@@ -228,7 +228,7 @@ function M:go_to_prev_sibling(node)
     local first_child = parent.entries[1]
     if node == first_child then return end
 
-    for i = 1,#parent.entries - 1 do
+    for i = 1, #parent.entries - 1 do
         if parent.entries[i+1] == node then
             local prev_node = parent.entries[i]
             return {
