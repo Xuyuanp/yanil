@@ -132,6 +132,8 @@ function DirNode:load()
         local name, ft = loop.fs_scandir_next(handle)
         if not name then break end
 
+        if self:check_ignore(name) then goto cont end
+
         local class = classes[ft] or FileNode
 
         local abs_path = self.abs_path
@@ -155,8 +157,11 @@ function DirNode:load()
             depth = self.depth + 1,
             link_to = realpath,
             parent = self,
+            filters = self.filters,
         }
         table.insert(self.entries, node)
+
+        ::cont::
     end
 
     self:sort_entries()
@@ -323,6 +328,13 @@ function DirNode:load_state(state)
     end
 
     open_dirs(self)
+end
+
+function DirNode:check_ignore(name)
+    if not self.filters or #self.filters == 0 then return end
+    for _, filter in ipairs(self.filters) do
+        if filter(name) then return true end
+    end
 end
 
 return {

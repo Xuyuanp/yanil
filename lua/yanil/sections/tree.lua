@@ -26,6 +26,7 @@ function M:setup(opts)
     opts = opts or {}
 
     self.draw_opts = opts.draw_opts
+    self.filters = opts.filters
 
     self.keymaps = vim.tbl_deep_extend("keep", opts.keymaps or {}, self.keymaps)
 
@@ -45,6 +46,7 @@ function M:set_cwd(cwd)
     self.root = nodelib.Dir:new {
         name = cwd,
         abs_path = cwd,
+        filters = self.filters,
     }
 
     if self.dir_state then
