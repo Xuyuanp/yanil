@@ -224,11 +224,12 @@ function M.apply_changes(linenr, changes)
         api.nvim_buf_add_highlight(bufnr, hl.ns_id or utils.ns_id, hl.hl_group, linenr + hl.line, hl.col_start, hl.col_end)
     end
 
+    -- TODO: set line relative to section start linenr
     local cursor = changes.cursor
     if cursor then
         local winnr = M.winnr()
         local current_cursor = api.nvim_win_get_cursor(winnr)
-        api.nvim_win_set_cursor(M.winnr(), {
+        pcall(api.nvim_win_set_cursor, M.winnr(), {
             current_cursor[1] + (cursor.line or 0),
             current_cursor[2] + (cursor.col or 0),
         })
