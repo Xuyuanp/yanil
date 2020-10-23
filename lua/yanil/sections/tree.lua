@@ -51,9 +51,8 @@ function M:set_cwd(cwd)
 
     if self.dir_state then
         self.root:load_state(self.dir_state)
-    else
-        self.root:open()
     end
+    self.root:open()
 end
 
 function M:refresh(reload)
@@ -83,7 +82,7 @@ function M:total_lines()
 end
 
 function M:on_open(cwd)
-    self:set_cwd(cwd)
+    if not self.cwd or cwd then self:set_cwd(cwd) end
 end
 
 function M:on_exit()
