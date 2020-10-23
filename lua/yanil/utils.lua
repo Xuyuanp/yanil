@@ -46,8 +46,10 @@ function M.spawn(path, options, callback)
     handle = loop.spawn(path, vim.tbl_deep_extend("keep", options, {
         stdio = {nil, stdout, stderr},
     }), function(code, signal)
-        callback(code, signal, stdout_chunk, stderr_chunk)
+        pcall(callback, code, signal, stdout_chunk, stderr_chunk)
         handle:close()
+        stdout:close()
+        stderr:close()
     end)
 
     stdout:read_start(function(err, data)
