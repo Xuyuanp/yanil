@@ -192,7 +192,7 @@ function M.draw()
     end)
 end
 
---- apply changes to canvas
+---apply changes to canvas
 ---@param linenr number: Base line number
 ---@param changes table: Map of change descriptions. K-Vs are in these form:
 ---  texts: (optional)
@@ -230,7 +230,7 @@ function M.apply_changes(linenr, changes)
         local winnr = M.winnr()
         local current_cursor = api.nvim_win_get_cursor(winnr)
         pcall(api.nvim_win_set_cursor, M.winnr(), {
-            current_cursor[1] + (cursor.line or 0),
+            linenr + (cursor.line or 0) + 1,
             current_cursor[2] + (cursor.col or 0),
         })
     end
@@ -291,6 +291,9 @@ end
 function M.trigger_hook(name, ...)
     for _, fn in ipairs(M.hooks[name] or {}) do
         fn(...)
+    end
+    for _, section in ipairs(M.sections) do
+        if section[name] then section[name](section, ...) end
     end
 end
 

@@ -9,17 +9,6 @@ local utils = require("yanil/utils")
 
 local M = Section:new {
     name = "Tree",
-    keymaps = {
-        ["<CR>"] = function(tree, node) return tree:open_node(node) end,
-        s = function(tree, node) return tree:open_file_node(node, "vsplit") end,
-        i = function(tree, node) return tree:open_file_node(node, "split") end,
-        C = function(tree, node) tree:cd_to_node(node) end,
-        U = function(tree, node, key, linenr) tree:cd_to_parent(node, key, linenr) end,
-        K = function(tree, node) return tree:go_to_first_child(node) end,
-        J = function(tree, node) return tree:go_to_last_child(node) end,
-        ["<C-K>"] = function(tree, node) return tree:go_to_prev_sibling(node) end,
-        ["<C-J>"] = function(tree, node) return tree:go_to_next_sibling(node) end,
-    }
 }
 
 function M:setup(opts)
@@ -28,13 +17,19 @@ function M:setup(opts)
     self.draw_opts = opts.draw_opts
     self.filters = opts.filters
 
-    self.keymaps = vim.tbl_deep_extend("keep", opts.keymaps or {}, self.keymaps)
-
-    -- TODO: is here the right place?
-    require("yanil/canvas").register_hooks {
-        on_exit = function() self:on_exit() end,
-        on_open = function(cwd) self:on_open(cwd) end,
+    local default_keymaps = {
+        ["<CR>"] = self.open_node,
+        s = self:gen_open_file_node("vsplit"),
+        i = self:gen_open_file_node("split"),
+        C = self.cd_to_node,
+        U = self.cd_to_parent,
+        K = self.go_to_first_child,
+        J = self.go_to_last_child,
+        ["<C-K>"] = self:gen_go_to_sibling(-1),
+        ["<C-J>"] = self:gen_go_to_sibling(1),
     }
+
+    self.keymaps = vim.tbl_deep_extend("keep", opts.keymaps or {}, default_keymaps)
 end
 
 function M:set_cwd(cwd)
@@ -60,6 +55,10 @@ function M:refresh(reload)
     if reload then return end
 
     self:post_changes(self:draw())
+end
+
+function M:iter(loaded)
+    return self.root:iter(loaded)
 end
 
 function M:draw()
@@ -104,7 +103,6 @@ function M:on_key(linenr, key)
 end
 
 -- key handlers
-
 function M:open_file_node(node, cmd)
     cmd = cmd or "e"
     if node:is_dir() then return end
@@ -117,6 +115,12 @@ function M:open_file_node(node, cmd)
     end
     api.nvim_command("wincmd p")
     api.nvim_command(cmd .. " " .. node.abs_path)
+end
+
+function M:gen_open_file_node(cmd)
+    return function(_, node)
+        return self:open_file_node(node, cmd)
+    end
 end
 
 function M:open_node(node)
@@ -145,24 +149,22 @@ function M:cd_to_node(node)
     self:cd_to_path(node.abs_path)
 end
 
-function M:cd_to_parent(_node, _key, linenr)
-    if self.cwd == "/" then return end -- TODO: check root path for windows
+function M:cd_to_parent()
+    if self.cwd == utils.path_sep then return end -- TODO: check root path for windows
     local old_cwd = self.cwd
     local parent = vim.fn.fnamemodify(self.cwd, ":h:h")
     self:cd_to_path(parent)
 
-    local index = 0
-    for node in self.root:iter() do
+    for node, index in self:iter() do
         if node.abs_path == old_cwd then
-            break
+            self:post_changes {
+                cursor = {
+                    line = index
+                }
+            }
+            return
         end
-        index = index + 1
     end
-    self:post_changes {
-        cursor = {
-            line = index - linenr
-        }
-    }
 end
 
 function M:cd_to_path(path)
@@ -180,6 +182,16 @@ function M:cd_to_path(path)
     }
 end
 
+function M:go_to_node(node)
+    local index = self.root:find_node(node)
+    if not index then return end
+    self:post_changes {
+        cursor = {
+            line = index
+        }
+    }
+end
+
 function M:go_to_last_child(node)
     if not node.parent then return end
 
@@ -187,18 +199,7 @@ function M:go_to_last_child(node)
     local last_child = parent:get_last_entry()
     if node == last_child then return end
 
-    local index = 1
-    for child in parent:iter() do
-        if child == node then
-            break
-        end
-        index = index + 1
-    end
-    return {
-        cursor = {
-            line = parent:total_lines() - index
-        }
-    }
+    return self:go_to_node(last_child)
 end
 
 function M:go_to_first_child(node)
@@ -208,51 +209,22 @@ function M:go_to_first_child(node)
     local first_child = parent.entries[1]
     if node == first_child then return end
 
-    local index = 1
-    for child in parent:iter() do
-        if child == node then
-            break
-        end
-        index = index + 1
-    end
-    return {
-        cursor = {
-            line = -index + 2
-        }
-    }
+    return self:go_to_node(first_child)
 end
 
-function M:go_to_prev_sibling(node)
-    if not node.parent then return end
-
-    local parent = node.parent
-    local first_child = parent.entries[1]
-    if node == first_child then return end
-
-    for i = 1, #parent.entries - 1 do
-        if parent.entries[i+1] == node then
-            local prev_node = parent.entries[i]
-            return {
-                cursor = {
-                    line = - prev_node:total_lines()
-                }
-            }
-        end
+---Generate go_to_sibling function
+---@param n number
+function M:gen_go_to_sibling(n)
+    return function(_, node)
+        return self:go_to_sibling(node, n)
     end
 end
 
-function M:go_to_next_sibling(node)
-    if not node.parent then return end
+function M:go_to_sibling(node, n)
+    local sibling = node:find_sibling(n)
+    if not sibling then return end
 
-    local parent = node.parent
-    local last_child = parent:get_last_entry()
-    if node == last_child then return end
-
-    return {
-        cursor = {
-            line = node:total_lines()
-        }
-    }
+    return self:go_to_node(sibling)
 end
 
 return M

@@ -194,31 +194,58 @@ function DirNode:toggle()
 end
 
 function DirNode:iter(loaded)
+    validate {
+        loaded = { loaded, "boolean", true },
+    }
     local stack = utils.new_stack()
     stack:push(self)
+    local index = -1
     return function()
         local current_node = stack:pop()
         if not current_node then return end
+        index = index + 1
         if current_node:is_dir() and (current_node.is_open or (current_node.is_loaded and loaded)) then
-            for index = #current_node.entries, 1, -1 do
-                stack:push(current_node.entries[index])
+            for i = #current_node.entries, 1, -1 do
+                stack:push(current_node.entries[i])
             end
         end
-        return current_node
+        return current_node, index
+    end
+end
+
+function DirNode:find_node(node)
+    for entry, index in self:iter() do
+        if entry == node then return index end
+    end
+end
+
+function Node:find_sibling(n)
+    validate {
+        n = { n, "number" }
+    }
+    local parent = self.parent
+    if not parent then return end
+
+    for i, entry in ipairs(parent.entries) do
+        if entry == self then
+            local index = i + n
+            if index >= 1 and index <= #parent.entries then
+                return parent.entries[index]
+            end
+            return
+        end
     end
 end
 
 function DirNode:get_nth_node(n, loaded)
-    local index = 0
-    for node in self:iter(loaded) do
+    for node, index in self:iter(loaded) do
         if index == n then return node end
-        index = index + 1
     end
 end
 
--- TODO: more sort options
-function DirNode:sort_entries(_opts)
-    table.sort(self.entries, function(lhs, rhs)
+function DirNode:sort_entries(opts)
+    opts = opts or {}
+    table.sort(self.entries, opts.comp or function(lhs, rhs)
         if lhs:is_dir() and not rhs:is_dir() then return true end
         if rhs:is_dir() and not lhs:is_dir() then return false end
 
