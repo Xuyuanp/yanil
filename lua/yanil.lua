@@ -4,7 +4,6 @@ local devicons = require("yanil/devicons")
 local config = {
     colors   = require("yanil/colors"),
     commands = require("yanil/commands"),
-    keymaps  = require("yanil/keymaps"),
 }
 
 local M = {}
