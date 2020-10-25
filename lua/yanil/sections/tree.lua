@@ -27,6 +27,8 @@ function M:setup(opts)
         J = self.go_to_last_child,
         ["<C-K>"] = self:gen_go_to_sibling(-1),
         ["<C-J>"] = self:gen_go_to_sibling(1),
+        r = function(tree, node) return tree:refresh(node) end,
+        R = function(tree) return tree:refresh() end,
     }
 
     self.keymaps = vim.tbl_deep_extend("keep", opts.keymaps or {}, default_keymaps)
@@ -50,24 +52,28 @@ function M:set_cwd(cwd)
     self.root:open()
 end
 
-function M:refresh(reload)
-    -- TODO: deal with reload
-    if reload then return end
-
-    self:post_changes(self:draw())
+function M:refresh(node, opts)
+    node = node or self.root
+    local index = self.root:find_node(node)
+    local changes = self:draw(node, opts)
+    self:post_changes(changes, index)
 end
 
 function M:iter(loaded)
     return self.root:iter(loaded)
 end
 
-function M:draw()
-    if not self.root then return end
-    local lines, highlights = self.root:draw(self.draw_opts)
+function M:draw(node, opts)
+    opts = opts or {}
+    node = node or self.root
+    if not node then return end
+
+    local total_lines = node:total_lines()
+    local lines, highlights = node:draw(vim.tbl_deep_extend("force", self.draw_opts, opts))
     if not lines then return end
     local texts = {{
         line_start = 0,
-        line_end = #lines,
+        line_end = opts.non_recursive and #lines or total_lines,
         lines = lines
     }}
     return {

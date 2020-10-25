@@ -291,7 +291,7 @@ end
 
 function DirNode:draw(opts, lines, highlights)
     lines, highlights = Node.draw(self, opts, lines, highlights)
-    if self.is_open then
+    if self.is_open and not opts.non_recursive then
         for _, child in ipairs(self.entries) do
             child:draw(opts, lines, highlights)
         end

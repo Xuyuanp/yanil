@@ -213,6 +213,14 @@ function M.apply_buf(bufnr)
     M.update()
 end
 
+function M.refresh_tree(tree)
+    for node in tree:iter() do
+        if M.prev_state[node.abs_path] ~= M.state[node.abs_path] then
+            tree:refresh(node, { non_recursive = true })
+        end
+    end
+end
+
 function M.jump(tree, linenr, step)
     local total_lines = tree:total_lines()
     local start, total = step, step * total_lines

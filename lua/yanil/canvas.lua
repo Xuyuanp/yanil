@@ -256,9 +256,10 @@ function M.get_section_start_linenr(section)
     end
 end
 
-function M.on_section_changed(section, changes)
+function M.on_section_changed(section, changes, linenr_offset)
     local linenr = M.get_section_start_linenr(section)
     if not linenr then error("no such section: " .. section.name) end
+    linenr = linenr + (linenr_offset or 0)
 
     M.in_edit_mode(function()
         M.apply_changes(linenr, changes)
