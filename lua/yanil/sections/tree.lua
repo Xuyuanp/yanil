@@ -60,6 +60,7 @@ function M:refresh(node, opts)
 end
 
 function M:iter(loaded)
+    if not self.root then return function() end end
     return self.root:iter(loaded)
 end
 
