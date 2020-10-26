@@ -38,7 +38,7 @@ function M.setup(opts)
 
     api.nvim_command("augroup yanil_git")
     api.nvim_command("autocmd!")
-    api.nvim_command("autocmd BufWritePost * lua require('yanil/git').update()")
+    api.nvim_command([[autocmd BufWritePost * if empty(&buftype) | call luaeval('require("yanil/git").update()') | endif]])
     api.nvim_command("autocmd User FugitiveChanged lua require('yanil/git').update()")
     api.nvim_command("augroup end")
 end
