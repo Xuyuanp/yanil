@@ -228,11 +228,7 @@ function M.jump(tree, linenr, step)
         local index = (i + linenr) % total_lines
         local node = tree.root:get_nth_node(index) -- TODO: optimaze
         if node.parent and M.get_icon_and_hl(node.abs_path) then
-            tree:post_changes {
-                cursor = {
-                    line = index - linenr
-                }
-            }
+            tree:go_to_node(node)
             return
         end
     end
