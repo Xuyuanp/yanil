@@ -121,17 +121,18 @@ function LinkDirNode:is_directory()
     return true
 end
 
-function DirNode:load()
+function DirNode:load(force)
+    if self.is_loaded and not force then return end
+
     local handle, err = loop.fs_scandir(self.abs_path)
     if not handle then
         api.nvim_err_writeln(string.format("scandir %s failed: %s", self.abs_path, err))
         return
     end
 
-    while true do
-        local name, ft = loop.fs_scandir_next(handle)
-        if not name then break end
+    self.entries = {}
 
+    for name, ft in function() return loop.fs_scandir_next(handle) end do
         if self:check_ignore(name) then goto cont end
 
         local class = classes[ft] or FileNode
@@ -167,6 +168,7 @@ function DirNode:load()
     self:sort_entries()
 
     self.is_loaded = true
+    return true
 end
 
 function DirNode:open()
@@ -216,6 +218,18 @@ end
 function DirNode:find_node(node)
     for entry, index in self:iter() do
         if entry == node then return index end
+    end
+end
+
+function DirNode:find_node_by_path(path)
+    if not vim.startswith(path, self.abs_path) then return end
+    if self.abs_path == path then return self end
+    for _, entry in ipairs(self.entries) do
+        if entry.abs_path == path then return entry end
+        if entry:is_dir() and vim.startswith(path, entry.abs_path) then
+            entry:load()
+            return entry:find_node_by_path(path)
+        end
     end
 end
 

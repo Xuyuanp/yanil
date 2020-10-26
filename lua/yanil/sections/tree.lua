@@ -52,10 +52,11 @@ function M:set_cwd(cwd)
     self.root:open()
 end
 
-function M:refresh(node, opts)
+function M:refresh(node, opts, action)
     node = node or self.root
     local index = self.root:find_node(node)
-    local changes = self:draw(node, opts)
+    if not index then return end
+    local changes = self:draw(node, opts, action)
     self:post_changes(changes, index)
 end
 
@@ -64,12 +65,15 @@ function M:iter(loaded)
     return self.root:iter(loaded)
 end
 
-function M:draw(node, opts)
+function M:draw(node, opts, action)
     opts = opts or {}
     node = node or self.root
     if not node then return end
 
     local total_lines = node:total_lines()
+
+    if action then action(node) end
+
     local lines, highlights = node:draw(vim.tbl_deep_extend("force", self.draw_opts, opts))
     if not lines then return end
     local texts = {{
@@ -190,6 +194,21 @@ function M:cd_to_path(path)
 end
 
 function M:go_to_node(node)
+    local closed_parents = {}
+    local parent = node.parent
+    while parent do
+        if not parent.is_open then
+            table.insert(closed_parents, parent)
+        end
+        parent = parent.parent
+    end
+    if #closed_parents > 0 then
+        self:refresh(closed_parents[#closed_parents], nil, function()
+            for _, n in ipairs(closed_parents) do
+                n:open()
+            end
+        end)
+    end
     local index = self.root:find_node(node)
     if not index then return end
     self:post_changes {
