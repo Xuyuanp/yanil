@@ -251,7 +251,7 @@ function Node:find_sibling(n)
     end
 end
 
-function DirNode:get_nth_node(n, loaded)
+function DirNode:get_node_by_index(n, loaded)
     for node, index in self:iter(loaded) do
         if index == n then return node end
     end

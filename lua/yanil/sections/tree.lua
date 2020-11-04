@@ -56,7 +56,7 @@ function M:refresh(node, opts, action)
     node = node or self.root
     local index = self.root:find_node(node)
     if not index then return end
-    local changes = self:draw(node, opts, action)
+    local changes = self:draw_node(node, opts, action)
     self:post_changes(changes, index)
 end
 
@@ -65,7 +65,7 @@ function M:iter(loaded)
     return self.root:iter(loaded)
 end
 
-function M:draw(node, opts, action)
+function M:draw_node(node, opts, action)
     opts = opts or {}
     node = node or self.root
     if not node then return end
@@ -87,6 +87,18 @@ function M:draw(node, opts, action)
     }
 end
 
+function M:draw()
+    return self:draw_node(self.root)
+end
+
+-- straightforward but slow
+function M:find_neighbor(node, n)
+    if not node.parent then return end
+    for neighbor, index in self:iter() do
+        if self.root:get_node_by_index(index - n) == node then return neighbor end
+    end
+end
+
 function M:total_lines()
     return self.root:total_lines()
 end
@@ -104,7 +116,7 @@ function M:watching_keys()
 end
 
 function M:on_key(linenr, key)
-    local node = self.root:get_nth_node(linenr)
+    local node = self.root:get_node_by_index(linenr)
     if not node then return end
 
     local action = self.keymaps[key]

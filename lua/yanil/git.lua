@@ -226,7 +226,7 @@ function M.jump(tree, linenr, step)
     local start, total = step, step * total_lines
     for i = start, total, step do
         local index = (i + linenr) % total_lines
-        local node = tree.root:get_nth_node(index) -- TODO: optimaze
+        local node = tree.root:get_node_by_index(index) -- TODO: optimaze
         if node.parent and M.get_icon_and_hl(node.abs_path) then
             tree:go_to_node(node)
             return
