@@ -264,7 +264,7 @@ local default_devicons = {
     go = {
         hl = {
             ctermfg = "215",
-            guifg = "#F5C06F"
+            guifg = "#7FD6E9"
         },
         icon = ""
     },
