@@ -981,6 +981,10 @@ end
 
 function M.decorator()
     return function(node)
+        if not node.parent then
+            local text = "פּ"
+            return text, "YanilTreeDirectory"
+        end
         if node:is_dir() then
             local text = node.is_open and "" or ""
             return text, node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
