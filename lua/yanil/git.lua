@@ -74,7 +74,9 @@ local parsers = {
         return get_status(line:sub(3, 3), line:sub(4, 4)), line:sub(114, -1)
     end,
     ["2"] = function(line)
-        return "Renamed", line:sub(114, -1)
+        -- 2 RM N... 100644 100644 100644 71aa5b06856d39533d3f38db3d99dd1fc03f7352 71aa5b06856d39533d3f38db3d99dd1fc03f7352 R100 <new-path>
+        local percent_path = line:sub(114, -1)
+        return "Renamed", vim.split(percent_path, " ")[2]
     end,
     ["u"] = function(line)
         return "Unmerged", line:sub(162, -1)
