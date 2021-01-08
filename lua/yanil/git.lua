@@ -190,7 +190,7 @@ function M.decorator()
 end
 
 function M.diff(node)
-    if M.state[node.abs_path] ~= "Modified" then return end
+    -- if M.state[node.abs_path] ~= "Modified" then return end
 
     return vim.fn.systemlist({"git", "diff", "--patch", "--no-color", "--diff-algorithm=default", node.abs_path})
 end
@@ -212,7 +212,11 @@ function M.apply_buf(bufnr)
 
     vim.fn.execute("q")
 
-    M.update()
+    if vim.g.loaded_fugitive then
+        api.nvim_command("doautocmd User FugitiveChanged")
+    else
+        M.update()
+    end
 end
 
 function M.refresh_tree(tree)
