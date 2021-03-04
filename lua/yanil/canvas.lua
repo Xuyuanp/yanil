@@ -267,6 +267,7 @@ function M.on_section_changed(section, changes, linenr_offset)
 end
 
 function M.in_edit_mode(fn)
+    if not vim.api.nvim_buf_is_loaded(M.bufnr) then return end
     api.nvim_buf_set_option(M.bufnr, "modifiable", true)
     local ok, err = pcall(fn)
     if not ok then api.nvim_err_writeln(err) end
