@@ -38,6 +38,7 @@ local win_options = {
     'foldcolumn=0',
     'signcolumn=yes:1',
     'bufhidden=wipe',
+    'filetype=Yanil',
 }
 
 function M.setup(opts)
