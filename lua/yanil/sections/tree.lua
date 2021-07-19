@@ -27,8 +27,8 @@ function M:setup(opts)
         J = self.go_to_last_child,
         ["<C-K>"] = self:gen_go_to_sibling(-1),
         ["<C-J>"] = self:gen_go_to_sibling(1),
-        r = function(tree, node) return tree:refresh(node) end,
-        R = function(tree) return tree:refresh() end,
+        r = self.force_refresh_node,
+        R = self.force_refresh_tree,
     }
 
     self.keymaps = vim.tbl_deep_extend("keep", opts.keymaps or {}, default_keymaps)
@@ -50,6 +50,18 @@ function M:set_cwd(cwd)
         self.root:load_state(self.dir_state)
     end
     self.root:open()
+end
+
+function M:force_refresh_node(node)
+    if not node then return end
+    if not node:is_dir() then node = node.parent end
+    self:refresh(node, {}, function()
+        node:load(true)
+    end)
+end
+
+function M:force_refresh_tree()
+    self:force_refresh_node(self.root)
 end
 
 function M:refresh(node, opts, action)
