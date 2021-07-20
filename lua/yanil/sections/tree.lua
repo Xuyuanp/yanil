@@ -46,9 +46,6 @@ function M:set_cwd(cwd)
         filters = self.filters,
     }
 
-    if self.dir_state then
-        self.root:load_state(self.dir_state)
-    end
     self.root:open()
 end
 
@@ -56,7 +53,9 @@ function M:force_refresh_node(node)
     if not node then return end
     if not node:is_dir() then node = node.parent end
     self:refresh(node, {}, function()
+        local dir_state = node:dump_state()
         node:load(true)
+        node:load_state(dir_state)
     end)
 end
 
@@ -100,6 +99,9 @@ function M:draw_node(node, opts, action)
 end
 
 function M:draw()
+    if self.dir_state then
+        self.root:load_state(self.dir_state)
+    end
     return self:draw_node(self.root)
 end
 
