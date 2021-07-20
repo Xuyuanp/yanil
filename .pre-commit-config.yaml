@@ -2,17 +2,17 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.4.0
+  rev: v4.0.1
   hooks:
   - id: trailing-whitespace
   - id: end-of-file-fixer
   - id: check-added-large-files
   - id: mixed-line-ending
 - repo: https://github.com/Vimjas/vint
-  rev: master
+  rev: v0.4a3
   hooks:
   - id: vint
 - repo: https://github.com/Calinou/pre-commit-luacheck
-  rev: master
+  rev: v1.0.0
   hooks:
   - id: luacheck
