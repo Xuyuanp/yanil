@@ -818,6 +818,12 @@ local default_devicons = {
         },
         icon = ""
     },
+    txt = {
+        hl = {
+            guifg = "#FFFFFF"
+        },
+        icon = ""
+    }
 }
 
 local exact_matches = {
@@ -940,13 +946,10 @@ local api = vim.api
 
 local M = {}
 
-local highlights = {}
-
 local function highlight_define(ft, ctermfg, guifg)
     ctermfg = ctermfg or "NONE"
     guifg = guifg or "NONE"
     local name = string.format("YanilDevicons_%s", ft)
-    highlights[ft] = name
     local cmd = string.format("silent hi %s ctermfg=%s guifg=%s", name, ctermfg, guifg)
     api.nvim_command(cmd)
 end
@@ -958,6 +961,7 @@ function M.setup_highlight()
 end
 
 function M.setup(_opts)
+    M.setup_highlight()
     api.nvim_command("augroup yanil_devicons_highlight")
     api.nvim_command("autocmd!")
     api.nvim_command("autocmd ColorScheme * lua require('yanil/devicons').setup_highlight()")
@@ -968,14 +972,18 @@ local function check_specials(name)
     if vim.endswith(name, "rc") then return "conf" end
 end
 
-function M.get(name, ext)
+function M.get(name, ext, opts)
+    opts = opts or {}
     ext = ext ~= "" and ext or nil
     ext = exact_matches[name:lower()] or ext
     ext = extension_aliases[ext] or ext
     ext = ext or check_specials(name)
     local cfg = default_devicons[ext]
     if cfg then
-        return cfg.icon, highlights[ext]
+        return cfg.icon, string.format("YanilDevicons_%s", ext)
+    end
+    if opts.default then
+        return '', 'Normal'
     end
 end
 
