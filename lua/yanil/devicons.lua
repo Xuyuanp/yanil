@@ -413,8 +413,7 @@ local default_devicons = {
     },
     lua = {
         hl = {
-            ctermfg = "96",
-            guifg = "#834F79"
+            guifg = "#51A0CF"
         },
         icon = ""
     },
