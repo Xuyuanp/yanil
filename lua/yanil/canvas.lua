@@ -1,7 +1,7 @@
 local vim = vim
 local api = vim.api
 
-local utils = require("yanil/utils")
+local utils = require('yanil.utils')
 
 local validate = vim.validate
 
@@ -13,16 +13,16 @@ local validate = vim.validate
 
 local M = {
     bufnr = nil,
-    bufname = "Yanil",
+    bufname = 'Yanil',
     hooks = {},
     keys = {},
 }
 
 local buffer_options = {
-    bufhidden = "wipe",
-    buftype = "nofile",
+    bufhidden = 'wipe',
+    buftype = 'nofile',
     modifiable = false,
-    filetype = "Yanil",
+    filetype = 'Yanil',
 }
 local win_options = {
     'noswapfile',
@@ -53,40 +53,40 @@ function M.setup(opts)
         end
     end
 
-    utils.set_autocmds("yanil_canvas", {
+    utils.set_autocmds('yanil_canvas', {
         {
-            event = "BufEnter",
+            event = 'BufEnter',
             cmd = M.on_enter,
         },
         {
-            event = "BufLeave",
-            cmd = M.on_leave
+            event = 'BufLeave',
+            cmd = M.on_leave,
         },
         {
-            event = "BufWipeout",
-            cmd = M.on_exit
-        }
+            event = 'BufWipeout',
+            cmd = M.on_exit,
+        },
     })
 
     if opts.autocmds then
-        utils.set_autocmds("yanil_canvas_custom", opts.autocmds)
+        utils.set_autocmds('yanil_canvas_custom', opts.autocmds)
     end
 end
 
 function M.on_enter()
-    M.trigger_hook("on_enter")
+    M.trigger_hook('on_enter')
 end
 
 function M.on_leave()
-    M.trigger_hook("on_leave")
+    M.trigger_hook('on_leave')
 end
 
 function M.on_open(cwd)
-    M.trigger_hook("on_open", cwd)
+    M.trigger_hook('on_open', cwd)
 end
 
 function M.on_exit()
-    M.trigger_hook("on_exit")
+    M.trigger_hook('on_exit')
 
     M.cursor = api.nvim_win_get_cursor(M.winnr())
 end
@@ -94,7 +94,7 @@ end
 function M.winnr()
     for _, winnr in ipairs(api.nvim_list_wins()) do
         local bufname = api.nvim_buf_get_name(api.nvim_win_get_buf(winnr))
-        if bufname:match(".*/"..M.bufname.."$") then
+        if bufname:match('.*/' .. M.bufname .. '$') then
             return winnr
         end
     end
@@ -112,28 +112,32 @@ local function create_buf(name)
 end
 
 local function create_win(bufnr)
-    api.nvim_command("noautocmd topleft vertical 30 new")
-    api.nvim_command("noautocmd setlocal bufhidden=wipe")
+    api.nvim_command('noautocmd topleft vertical 30 new')
+    api.nvim_command('noautocmd setlocal bufhidden=wipe')
 
     api.nvim_win_set_buf(0, bufnr)
 
     for _, win_opt in ipairs(win_options) do
-        api.nvim_command("noautocmd setlocal " .. win_opt)
+        api.nvim_command('noautocmd setlocal ' .. win_opt)
     end
 end
 
 function M.get_current_linenr()
     local winnr = M.winnr()
-    if not winnr then return end
+    if not winnr then
+        return
+    end
     return api.nvim_win_get_cursor(winnr)[1] - 1
 end
 
 function M.set_keymaps()
     for key, section_names in pairs(M.keys) do
-        utils.buf_set_keymap(M.bufnr, "n", key, function()
+        utils.buf_set_keymap(M.bufnr, 'n', key, function()
             local linenr = M.get_current_linenr()
             local section, relative_linenr = M.get_section_on_linenr(linenr)
-            if not section or not vim.tbl_contains(section_names, section.name) then return end
+            if not section or not vim.tbl_contains(section_names, section.name) then
+                return
+            end
 
             local changes = section:on_key(relative_linenr, key)
             M.in_edit_mode(function()
@@ -144,7 +148,9 @@ function M.set_keymaps()
 end
 
 function M.open(cwd)
-    if M.winnr() then return end
+    if M.winnr() then
+        return
+    end
 
     M.bufnr = create_buf(M.bufname)
     create_win(M.bufnr)
@@ -165,7 +171,9 @@ end
 
 function M.close()
     local winnr = M.winnr()
-    if not winnr then return end
+    if not winnr then
+        return
+    end
 
     api.nvim_win_close(winnr, true)
 end
@@ -211,16 +219,22 @@ end
 ---    line: relative lines to move cursor (optional)
 ---    col: relative columns to move cursor (optional)
 function M.apply_changes(linenr, changes)
-    if not changes then return end
+    if not changes then
+        return
+    end
     local bufnr = M.bufnr
     local texts = changes.texts or {}
-    if not vim.tbl_islist(texts) then texts = { texts } end
+    if not vim.tbl_islist(texts) then
+        texts = { texts }
+    end
     for _, text in ipairs(texts) do
         api.nvim_buf_set_lines(bufnr, linenr + text.line_start, linenr + text.line_end, false, text.lines)
     end
 
     local highlights = changes.highlights or {}
-    if not vim.tbl_islist(highlights) then highlights = { highlights } end
+    if not vim.tbl_islist(highlights) then
+        highlights = { highlights }
+    end
     for _, hl in ipairs(highlights) do
         api.nvim_buf_add_highlight(bufnr, hl.ns_id or utils.ns_id, hl.hl_group, linenr + hl.line, hl.col_start, hl.col_end)
     end
@@ -252,14 +266,18 @@ end
 function M.get_section_start_linenr(section)
     local linenr = 0
     for _, sec in ipairs(M.sections) do
-        if sec == section then return linenr end
+        if sec == section then
+            return linenr
+        end
         linenr = linenr + sec:total_lines()
     end
 end
 
 function M.on_section_changed(section, changes, linenr_offset)
     local linenr = M.get_section_start_linenr(section)
-    if not linenr then error("no such section: " .. section.name) end
+    if not linenr then
+        error('no such section: ' .. section.name)
+    end
     linenr = linenr + (linenr_offset or 0)
 
     M.in_edit_mode(function()
@@ -268,18 +286,22 @@ function M.on_section_changed(section, changes, linenr_offset)
 end
 
 function M.in_edit_mode(fn)
-    if not vim.api.nvim_buf_is_loaded(M.bufnr) then return end
-    api.nvim_buf_set_option(M.bufnr, "modifiable", true)
+    if not vim.api.nvim_buf_is_loaded(M.bufnr) then
+        return
+    end
+    api.nvim_buf_set_option(M.bufnr, 'modifiable', true)
     local ok, err = pcall(fn)
-    if not ok then api.nvim_err_writeln(err) end
-    api.nvim_buf_set_option(M.bufnr, "modifiable", false)
+    if not ok then
+        api.nvim_err_writeln(err)
+    end
+    api.nvim_buf_set_option(M.bufnr, 'modifiable', false)
 end
 
 function M.register_hook(name, fn)
-    validate {
-        name = { name, "s" },
-        fn = { fn, "f" }
-    }
+    validate({
+        name = { name, 's' },
+        fn = { fn, 'f' },
+    })
     local fns = M.hooks[name] or {}
     table.insert(fns, fn)
     M.hooks[name] = fns
@@ -296,7 +318,9 @@ function M.trigger_hook(name, ...)
         fn(...)
     end
     for _, section in ipairs(M.sections) do
-        if section[name] then section[name](section, ...) end
+        if section[name] then
+            section[name](section, ...)
+        end
     end
 end
 

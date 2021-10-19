@@ -2,8 +2,9 @@ local vim = vim
 local api = vim.api
 local loop = vim.loop
 
-local utils = require("yanil/utils")
+local utils = require('yanil.utils')
 
+-- stylua: ignore
 local default_options = {
     icons = {
         Modified  = "",
@@ -22,25 +23,25 @@ local default_options = {
 
 do
     for status, _ in pairs(default_options.icons) do
-        default_options.highlights[status] = "YanilGit" .. status
+        default_options.highlights[status] = 'YanilGit' .. status
     end
 end
 
 local M = {
     state = {},
-    options = {}
+    options = {},
 }
 
 function M.setup(opts)
     opts = opts or {}
-    M.options.icons = vim.tbl_deep_extend("keep", opts.icons or {}, default_options.icons)
-    M.options.highlights = vim.tbl_deep_extend("keep", opts.highlights or {}, default_options.highlights)
+    M.options.icons = vim.tbl_deep_extend('keep', opts.icons or {}, default_options.icons)
+    M.options.highlights = vim.tbl_deep_extend('keep', opts.highlights or {}, default_options.highlights)
 
-    api.nvim_command("augroup yanil_git")
-    api.nvim_command("autocmd!")
-    api.nvim_command([[autocmd BufWritePost * if empty(&buftype) | call luaeval('require("yanil/git").update()') | endif]])
-    api.nvim_command("autocmd User FugitiveChanged lua require('yanil/git').update()")
-    api.nvim_command("augroup end")
+    api.nvim_command('augroup yanil_git')
+    api.nvim_command('autocmd!')
+    api.nvim_command([[autocmd BufWritePost * if empty(&buftype) | call luaeval('require("yanil.git").update()') | endif]])
+    api.nvim_command("autocmd User FugitiveChanged lua require('yanil.git').update()")
+    api.nvim_command('augroup end')
 end
 
 local delimiter = string.char(0)
@@ -58,61 +59,67 @@ local delimiter = string.char(0)
 -- [ MARC]     M    work tree changed since index
 -- [ MARC]     D    deleted in work tree
 local function get_status(x, y)
-    if y == "M" then
-        return "Modified"
-    elseif x == "D" or y == "D" then
-        return "Deleted"
-    elseif x == "M" or x == "A" then
-        return "Staged"
+    if y == 'M' then
+        return 'Modified'
+    elseif x == 'D' or y == 'D' then
+        return 'Deleted'
+    elseif x == 'M' or x == 'A' then
+        return 'Staged'
     else
-        error(string.format("unexpected status %s%s", x, y))
+        error(string.format('unexpected status %s%s', x, y))
     end
 end
 
 local parsers = {
-    ["1"] = function(line)
+    ['1'] = function(line)
         return get_status(line:sub(3, 3), line:sub(4, 4)), line:sub(114, -1)
     end,
-    ["2"] = function(line)
+    ['2'] = function(line)
         -- 2 RM N... 100644 100644 100644 71aa5b06856d39533d3f38db3d99dd1fc03f7352 71aa5b06856d39533d3f38db3d99dd1fc03f7352 R100 <new-path>
         local percent_path = line:sub(114, -1)
-        return "Renamed", vim.split(percent_path, " ")[2]
+        return 'Renamed', vim.split(percent_path, ' ')[2]
     end,
-    ["u"] = function(line)
-        return "Unmerged", line:sub(162, -1)
+    ['u'] = function(line)
+        return 'Unmerged', line:sub(162, -1)
     end,
-    ["?"] = function(line)
-        return "Untracked", line:sub(3, -1)
+    ['?'] = function(line)
+        return 'Untracked', line:sub(3, -1)
     end,
-    ["!"] = function(line)
-        return "Ignored", line:sub(3, -1)
+    ['!'] = function(line)
+        return 'Ignored', line:sub(3, -1)
     end,
 }
 
 function M.update(cwd)
     cwd = cwd or loop.cwd()
-    if not cwd then return end
-    if not vim.endswith(cwd, utils.path_sep) then cwd = cwd .. utils.path_sep end
+    if not cwd then
+        return
+    end
+    if not vim.endswith(cwd, utils.path_sep) then
+        cwd = cwd .. utils.path_sep
+    end
 
     local git_root
 
     local status_callback = vim.schedule_wrap(function(code, _signal, stdout, stderr)
         if code > 0 then
-            api.nvim_err_writeln(string.format("git status failed: %s", stderr))
+            api.nvim_err_writeln(string.format('git status failed: %s', stderr))
             return
         end
 
         local state = {}
 
-        stdout = stdout or ""
+        stdout = stdout or ''
         local lines = vim.split(stdout, delimiter)
         local is_rename = false
         for _, line in ipairs(lines) do
-            if line == "" then break end
+            if line == '' then
+                break
+            end
 
             local status, path
             if is_rename then
-                status = "Dirty"
+                status = 'Dirty'
                 path = line
 
                 is_rename = false
@@ -120,25 +127,27 @@ function M.update(cwd)
                 local parser = parsers[line:sub(1, 1)]
                 status, path = parser(line)
 
-                is_rename = status == "Renamed"
+                is_rename = status == 'Renamed'
             end
 
             local abs_path = git_root .. path
             state[abs_path] = status
 
             while vim.startswith(abs_path, git_root) do
-                abs_path = vim.fn.fnamemodify(abs_path, ":h")
+                abs_path = vim.fn.fnamemodify(abs_path, ':h')
                 local dir = abs_path .. utils.path_sep
-                if state[dir] then break end
-                state[dir] = "Dirty"
+                if state[dir] then
+                    break
+                end
+                state[dir] = 'Dirty'
             end
         end
 
         if not utils.table_equal(M.state, state) then
             M.prev_state = M.state
             M.state = state
-            if vim.fn.exists("#User#YanilGitStatusChanged") then
-                api.nvim_command("doautocmd User YanilGitStatusChanged")
+            if vim.fn.exists('#User#YanilGitStatusChanged') then
+                api.nvim_command('doautocmd User YanilGitStatusChanged')
             end
         end
     end)
@@ -148,22 +157,22 @@ function M.update(cwd)
             return
         end
 
-        git_root = vim.trim(stdout) .. "/"
+        git_root = vim.trim(stdout) .. '/'
 
-        utils.spawn("git", {
+        utils.spawn('git', {
             args = {
-                "status",
-                "--porcelain=v2",
-                "-z",
+                'status',
+                '--porcelain=v2',
+                '-z',
             },
             cwd = git_root,
         }, status_callback)
     end
 
-    utils.spawn("git", {
+    utils.spawn('git', {
         args = {
-            "rev-parse",
-            "--show-toplevel",
+            'rev-parse',
+            '--show-toplevel',
         },
         cwd = cwd,
     }, root_callback)
@@ -171,7 +180,9 @@ end
 
 function M.get_icon_and_hl(path)
     local status = M.state[path]
-    if not status then return end
+    if not status then
+        return
+    end
 
     return M.options.icons[status], M.options.highlights[status]
 end
@@ -180,11 +191,13 @@ function M.decorator()
     return function(node)
         local icon, hl = M.get_icon_and_hl(node.abs_path)
         if not icon then
-            if node.parent then return "  " end
+            if node.parent then
+                return '  '
+            end
             return
         end
 
-        local text = string.format("%s ", icon)
+        local text = string.format('%s ', icon)
         return text, hl
     end
 end
@@ -192,28 +205,30 @@ end
 function M.diff(node)
     -- if M.state[node.abs_path] ~= "Modified" then return end
 
-    return vim.fn.systemlist({"git", "diff", "--patch", "--no-color", "--diff-algorithm=default", node.abs_path})
+    return vim.fn.systemlist({ 'git', 'diff', '--patch', '--no-color', '--diff-algorithm=default', node.abs_path })
 end
 
 function M.apply_buf(bufnr)
     bufnr = bufnr or 0
     local patch = api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    if not patch or #patch == 0 or (#patch == 1 and patch[1] == "") then
-        vim.fn.execute("q")
+    if not patch or #patch == 0 or (#patch == 1 and patch[1] == '') then
+        vim.fn.execute('q')
         return
     end
-    if patch[-1] ~= " " then table.insert(patch, " ") end
-    patch = table.concat(patch, "\n")
-    local output = vim.fn.system({"git", "apply", "--cached"}, patch)
+    if patch[-1] ~= ' ' then
+        table.insert(patch, ' ')
+    end
+    patch = table.concat(patch, '\n')
+    local output = vim.fn.system({ 'git', 'apply', '--cached' }, patch)
     if vim.v.shell_error > 0 then
-        api.nvim_err_writeln(string.format("git apply failed: %s", output))
+        api.nvim_err_writeln(string.format('git apply failed: %s', output))
         return
     end
 
-    vim.fn.execute("q")
+    vim.fn.execute('q')
 
     if vim.g.loaded_fugitive then
-        api.nvim_command("doautocmd User FugitiveChanged")
+        api.nvim_command('doautocmd User FugitiveChanged')
     else
         M.update()
     end
@@ -247,7 +262,6 @@ end
 function M.jump_prev(tree, _node, _key, linenr)
     M.jump(tree, linenr, -1)
 end
-
 
 function M.debug()
     print(vim.inspect(M.state))
