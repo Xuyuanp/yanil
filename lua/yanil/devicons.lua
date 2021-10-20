@@ -1,877 +1,877 @@
 local default_devicons = {
     ai = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     awk = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     bash = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     bat = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     bmp = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     c = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     cc = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     clj = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     cljc = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     cljs = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     coffee = {
         hl = {
-            ctermfg = '94',
-            guifg = '#905532',
+            ctermfg = "94",
+            guifg = "#905532"
         },
-        icon = '',
+        icon = ""
     },
     conf = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     cp = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     cpp = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     cs = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     csh = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     css = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     cxx = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     d = {
         hl = {
-            ctermfg = '124',
-            guifg = '#AE403F',
+            ctermfg = "124",
+            guifg = "#AE403F"
         },
-        icon = '',
+        icon = ""
     },
     dart = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     db = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     diff = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     dump = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     edn = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     eex = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     ejs = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     elm = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     erl = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     ex = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     exs = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     fsharp = {
         hl = {
-            ctermfg = '30',
-            guifg = '#44788E',
+            ctermfg = "30",
+            guifg = "#44788E"
         },
-        icon = '',
+        icon = ""
     },
     fish = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     fs = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     fsi = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     fsscript = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     fsx = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     gemspec = {
-        icon = '',
+        icon = ""
     },
     gif = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     go = {
         hl = {
-            ctermfg = '215',
-            guifg = '#7FD6E9',
+            ctermfg = "215",
+            guifg = "#7FD6E9"
         },
-        icon = '',
+        icon = ""
     },
     h = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     haml = {
-        icon = '',
+        icon = ""
     },
     hbs = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     hrl = {
         hl = {
-            ctermfg = '167',
-            guifg = '#CB6F6F',
+            ctermfg = "167",
+            guifg = "#CB6F6F"
         },
-        icon = '',
+        icon = ""
     },
     hs = {
         hl = {
-            ctermfg = '215',
-            guifg = '#F5C06F',
+            ctermfg = "215",
+            guifg = "#F5C06F"
         },
-        icon = '',
+        icon = ""
     },
     htm = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     html = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     hxx = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     ico = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     ini = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     java = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     jl = {
         hl = {
-            ctermfg = '97',
-            guifg = '#9558B2',
+            ctermfg = "97",
+            guifg = "#9558B2"
         },
-        icon = '',
+        icon = ""
     },
     jpeg = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     jpg = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     js = {
         hl = {
-            ctermfg = '215',
-            guifg = '#F5C06F',
+            ctermfg = "215",
+            guifg = "#F5C06F"
         },
-        icon = '',
+        icon = ""
     },
     json = {
         hl = {
-            ctermfg = '215',
-            guifg = '#F5C06F',
+            ctermfg = "215",
+            guifg = "#F5C06F"
         },
-        icon = '',
+        icon = ""
     },
     jsx = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     ksh = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     leex = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     less = {
         hl = {
-            ctermfg = '30',
-            guifg = '#44788E',
+            ctermfg = "30",
+            guifg = "#44788E"
         },
-        icon = '',
+        icon = ""
     },
     lhs = {
         hl = {
-            ctermfg = '215',
-            guifg = '#F5C06F',
+            ctermfg = "215",
+            guifg = "#F5C06F"
         },
-        icon = '',
+        icon = ""
     },
     lua = {
         hl = {
-            guifg = '#51A0CF',
+            guifg = "#51A0CF"
         },
-        icon = '',
+        icon = ""
     },
     markdown = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     md = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     mdx = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     mjs = {
         hl = {
-            ctermfg = '215',
-            guifg = '#F5C06F',
+            ctermfg = "215",
+            guifg = "#F5C06F"
         },
-        icon = '',
+        icon = ""
     },
     ml = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = 'λ',
+        icon = "λ"
     },
     mli = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = 'λ',
+        icon = "λ"
     },
     mustache = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     nix = {
-        icon = '',
+        icon = ""
     },
     php = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     pl = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     pm = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     png = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     pp = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     ps1 = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     psb = {
         hl = {
-            ctermfg = '30',
-            guifg = '#44788E',
+            ctermfg = "30",
+            guifg = "#44788E"
         },
-        icon = '',
+        icon = ""
     },
     psd = {
         hl = {
-            ctermfg = '30',
-            guifg = '#44788E',
+            ctermfg = "30",
+            guifg = "#44788E"
         },
-        icon = '',
+        icon = ""
     },
     py = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     pyc = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     pyd = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     pyo = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     r = {
-        icon = 'ﳒ',
+        icon = "ﳒ"
     },
     rake = {
-        icon = '',
+        icon = ""
     },
     rb = {
         hl = {
-            ctermfg = '124',
-            guifg = '#AE403F',
+            ctermfg = "124",
+            guifg = "#AE403F"
         },
-        icon = '',
+        icon = ""
     },
     rlib = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     rmd = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     rproj = {
-        icon = '鉶',
+        icon = "鉶"
     },
     rs = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     rss = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     sass = {
         hl = {
-            ctermfg = '167',
-            guifg = '#CB6F6F',
+            ctermfg = "167",
+            guifg = "#CB6F6F"
         },
-        icon = '',
+        icon = ""
     },
     scala = {
         hl = {
-            ctermfg = '124',
-            guifg = '#AE403F',
+            ctermfg = "124",
+            guifg = "#AE403F"
         },
-        icon = '',
+        icon = ""
     },
     scss = {
         hl = {
-            ctermfg = '167',
-            guifg = '#CB6F6F',
+            ctermfg = "167",
+            guifg = "#CB6F6F"
         },
-        icon = '',
+        icon = ""
     },
     sh = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     slim = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     sln = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     sql = {
         hl = {
-            ctermfg = '30',
-            guifg = '#44788E',
+            ctermfg = "30",
+            guifg = "#44788E"
         },
-        icon = '',
+        icon = ""
     },
     styl = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     suo = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     swift = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     t = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     tex = {
-        icon = 'ﭨ',
+        icon = "ﭨ"
     },
     toml = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     ts = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     tsx = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     twig = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     vim = {
         hl = {
-            ctermfg = '107',
-            guifg = '#8FAA54',
+            ctermfg = "107",
+            guifg = "#8FAA54"
         },
-        icon = '',
+        icon = ""
     },
     vue = {
         hl = {
-            ctermfg = '36',
-            guifg = '#42B883',
+            ctermfg = "36",
+            guifg = "#42B883"
         },
-        icon = '﵂',
+        icon = "﵂"
     },
     webmanifest = {
-        icon = '',
+        icon = ""
     },
     webp = {
         hl = {
-            ctermfg = '50',
-            guifg = '#3AFFDB',
+            ctermfg = "50",
+            guifg = "#3AFFDB"
         },
-        icon = '',
+        icon = ""
     },
     xcplayground = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     xul = {
         hl = {
-            ctermfg = '202',
-            guifg = '#F16529',
+            ctermfg = "202",
+            guifg = "#F16529"
         },
-        icon = '',
+        icon = ""
     },
     yaml = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     yml = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     zsh = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     procfile = {
         hl = {
-            ctermfg = '96',
-            guifg = '#834F79',
+            ctermfg = "96",
+            guifg = "#834F79"
         },
-        icon = '',
+        icon = ""
     },
     docker = {
         hl = {
-            ctermfg = '73',
-            guifg = '#689FB6',
+            ctermfg = "73",
+            guifg = "#689FB6"
         },
-        icon = '',
+        icon = ""
     },
     fav = {
         hl = {
-            ctermfg = '214',
-            guifg = '#F09F17',
+            ctermfg = "214",
+            guifg = "#F09F17"
         },
-        icon = '',
+        icon = ""
     },
     license = {
         hl = {
-            ctermfg = '231',
-            guifg = '#FFFFFF',
+            ctermfg = "231",
+            guifg = "#FFFFFF"
         },
-        icon = '',
+        icon = ""
     },
     gitlab = {
         hl = {
-            ctermfg = '172',
-            guifg = '#D4843E',
+            ctermfg = "172",
+            guifg = "#D4843E"
         },
-        icon = '',
+        icon = ""
     },
     excel = {
         hl = {
-            guifg = '#146C32',
+            guifg = "#146C32",
         },
-        icon = '',
+        icon = ""
     },
     word = {
         hl = {
-            guifg = '#025CB9',
+            guifg = "#025CB9",
         },
-        icon = '',
+        icon = ""
     },
     ppt = {
         hl = {
-            guifg = '#B62B16',
+            guifg = "#B62B16",
         },
-        icon = '',
+        icon = ""
     },
     txt = {
         hl = {
-            guifg = '#FFFFFF',
+            guifg = "#FFFFFF"
         },
-        icon = '',
-    },
+        icon = ""
+    }
 }
 
 local exact_matches = {
-    ['.bashprofile'] = 'bash',
-    ['.bashrc'] = 'bash',
-    ['.profile'] = 'bash',
-    ['.zshrc'] = 'zsh',
-    ['zprofile'] = 'zsh',
-    ['.zprofile'] = 'zsh',
-    ['.zlogin'] = 'zsh',
-    ['.zshenv'] = 'zsh',
-    ['vimrc'] = 'vim',
-    ['.vimrc'] = 'vim',
-    ['.gvimrc'] = 'vim',
-    ['_vimrc'] = 'vim',
-    ['_gvimrc'] = 'vim',
-    ['rakefile'] = 'rake',
-    ['config.ru'] = 'rb',
-    ['gemfile'] = 'rb',
-    ['.gitattributes'] = 'conf',
-    ['.gitconfig'] = 'conf',
-    ['.gitignore'] = 'conf',
-    ['.dockerignore'] = 'conf',
-    ['.env'] = 'conf',
-    ['cmakelists.txt'] = 'conf',
-    ['makefile'] = 'conf',
-    ['.ds_store'] = 'conf',
-    ['procfile'] = 'procfile',
-    ['docker-compose.yml'] = 'docker',
-    ['dockerfile'] = 'docker',
-    ['favicon.ico'] = 'fav',
-    ['license'] = 'license',
-    ['.gitlab-ci.yml'] = 'gitlab',
-    ['go.mod'] = 'conf',
-    ['go.sum'] = 'conf',
+    [".bashprofile"] = "bash",
+    [".bashrc"] = "bash",
+    [".profile"] = "bash",
+    [".zshrc"] = "zsh",
+    ["zprofile"] = "zsh",
+    [".zprofile"] = "zsh",
+    [".zlogin"] = "zsh",
+    [".zshenv"] = "zsh",
+    ["vimrc"] = "vim",
+    [".vimrc"] = "vim",
+    [".gvimrc"] = "vim",
+    ["_vimrc"] = "vim",
+    ["_gvimrc"] = "vim",
+    ["rakefile"] = "rake",
+    ["config.ru"] = "rb",
+    ["gemfile"] = "rb",
+    [".gitattributes"] = "conf",
+    [".gitconfig"] = "conf",
+    [".gitignore"] = "conf",
+    [".dockerignore"] = "conf",
+    [".env"] = "conf",
+    ["cmakelists.txt"] = "conf",
+    ["makefile"] = "conf",
+    [".ds_store"] = "conf",
+    ["procfile"] = "procfile",
+    ["docker-compose.yml"] = "docker",
+    ["dockerfile"] = "docker",
+    ["favicon.ico"] = "fav",
+    ["license"] = "license",
+    [".gitlab-ci.yml"] = "gitlab",
+    ["go.mod"] = "conf",
+    ["go.sum"] = "conf",
 }
 
 local extension_aliases = {
-    ru = 'rb',
-    ['f#'] = 'fsharp',
-    ['c++'] = 'cpp',
-    hpp = 'h',
-    hh = 'h',
-    xls = 'excel',
-    xlsx = 'excel',
-    doc = 'word',
-    docx = 'word',
-    ppt = 'ppt',
-    pptx = 'ppt',
+    ru = "rb",
+    ["f#"] = "fsharp",
+    ["c++"] = "cpp",
+    hpp = "h",
+    hh = "h",
+    xls = "excel",
+    xlsx = "excel",
+    doc = "word",
+    docx = "word",
+    ppt = "ppt",
+    pptx = "ppt",
 }
 
 -- local exact_matches = {
@@ -946,44 +946,40 @@ local api = vim.api
 local M = {}
 
 local function highlight_define(ft, ctermfg, guifg)
-    ctermfg = ctermfg or 'NONE'
-    guifg = guifg or 'NONE'
-    local name = string.format('YanilDevicons_%s', ft)
-    local cmd = string.format('silent hi %s ctermfg=%s guifg=%s', name, ctermfg, guifg)
+    ctermfg = ctermfg or "NONE"
+    guifg = guifg or "NONE"
+    local name = string.format("YanilDevicons_%s", ft)
+    local cmd = string.format("silent hi %s ctermfg=%s guifg=%s", name, ctermfg, guifg)
     api.nvim_command(cmd)
 end
 
 function M.setup_highlight()
     for ft, cfg in pairs(default_devicons) do
-        if cfg.hl then
-            highlight_define(ft, cfg.hl.ctermfg, cfg.hl.guifg)
-        end
+        if cfg.hl then highlight_define(ft, cfg.hl.ctermfg, cfg.hl.guifg) end
     end
 end
 
 function M.setup(_opts)
     M.setup_highlight()
-    api.nvim_command('augroup yanil_devicons_highlight')
-    api.nvim_command('autocmd!')
-    api.nvim_command("autocmd ColorScheme * lua require('yanil.devicons').setup_highlight()")
-    api.nvim_command('augroup end')
+    api.nvim_command("augroup yanil_devicons_highlight")
+    api.nvim_command("autocmd!")
+    api.nvim_command("autocmd ColorScheme * lua require('yanil/devicons').setup_highlight()")
+    api.nvim_command("augroup end")
 end
 
 local function check_specials(name)
-    if vim.endswith(name, 'rc') then
-        return 'conf'
-    end
+    if vim.endswith(name, "rc") then return "conf" end
 end
 
 function M.get(name, ext, opts)
     opts = opts or {}
-    ext = ext ~= '' and ext or nil
+    ext = ext ~= "" and ext or nil
     ext = exact_matches[name:lower()] or ext
     ext = extension_aliases[ext] or ext
     ext = ext or check_specials(name)
     local cfg = default_devicons[ext]
     if cfg then
-        return cfg.icon, string.format('YanilDevicons_%s', ext)
+        return cfg.icon, string.format("YanilDevicons_%s", ext)
     end
     if opts.default then
         return '', 'Normal'
@@ -993,20 +989,18 @@ end
 function M.decorator()
     return function(node)
         if not node.parent then
-            local text = 'פּ'
-            return text, 'YanilTreeDirectory'
+            local text = "פּ"
+            return text, "YanilTreeDirectory"
         end
         if node:is_dir() then
-            local text = node.is_open and '' or ''
-            return text, node:is_link() and 'YanilTreeLink' or 'YanilTreeDirectory'
+            local text = node.is_open and "" or ""
+            return text, node:is_link() and "YanilTreeLink" or "YanilTreeDirectory"
         end
 
         local icon, hl = M.get(node.name, node.extension)
-        if icon then
-            return icon, hl
-        end
+        if icon then return icon, hl end
 
-        return ''
+        return ""
     end
 end
 

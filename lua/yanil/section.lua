@@ -9,23 +9,22 @@ function M:new(o)
 end
 
 function M:init()
-    if not self.name then
-        error('cannot initialize abstrace section')
-    end
+    if not self.name then error("cannot initialize abstrace section") end
 end
 
 function M:draw()
-    error('not implemented')
+    error("not implemented")
 end
 
 function M:total_lines()
-    error('not implemented')
+    error("not implemented")
 end
 
-function M:watching_keys() end
+function M:watching_keys()
+end
 
 function M:on_key(linenr, key)
-    print('section', self.name, 'handled key', key, 'pressed event on line', linenr)
+    print("section", self.name, "handled key", key, "pressed event on line", linenr)
 end
 
 function M:set_post_changes_fn(fn)
