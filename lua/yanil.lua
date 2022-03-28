@@ -1,9 +1,9 @@
-local git      = require("yanil/git")
-local devicons = require("yanil/devicons")
+local git = require('yanil/git')
+local devicons = require('yanil/devicons')
 
 local config = {
-    colors   = require("yanil/colors"),
-    commands = require("yanil/commands"),
+    colors = require('yanil/colors'),
+    commands = require('yanil/commands'),
 }
 
 local M = {}
