@@ -67,7 +67,7 @@ end
 function M.is_binary(path)
     validate { path = { path, "string" } }
 
-    local output = vim.fn.system("file -binpLN " .. path)
+    local output = vim.fn.system("file -binLN " .. path)
     if vim.v.shell_error > 0 then
         api.nvim_err_writeln(string.format("check file %s mime encoding failed: %s", path, output))
         return
