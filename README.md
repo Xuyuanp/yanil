@@ -1,4 +1,5 @@
 # Yanil
+
 Yet Another Nerdtree In Lua
 
 This not an out-of-box nerdtree alternative (and won't be), but a lib to build your own nerdtree.
@@ -7,7 +8,7 @@ This not an out-of-box nerdtree alternative (and won't be), but a lib to build y
 
 ## Prerequisites
 
-* `neovim-0.5.0` or higher.
+- `neovim-0.8.0` or higher.
 
 ## Installation
 
@@ -16,7 +17,7 @@ This not an out-of-box nerdtree alternative (and won't be), but a lib to build y
 ## Setup
 
 It's not very easy to make it work (It's just a lib).
-A [sample config](https://github.com/Xuyuanp/vimrc/blob/master/lua/dotvim/yanil.lua) can be found in my personal dotfile.
+A [sample config](https://github.com/Xuyuanp/dotfiles/blob/main/config/nvim/lua/dotvim/config/yanil.lua) can be found in my personal dotfile.
 
 ## Note
 
@@ -24,11 +25,11 @@ This plugin is in very early stages and has no backward compatibility guarantees
 
 ### Known issues
 
-* Not support for windows
-* Not support for multi tabs
-* ...
+- Not support for windows
+- Not support for multi tabs
+- ...
 
 ## Credits
 
-* [nerdtree](https://github.com/preservim/nerdtree): It's one of the greatest vim plugin.
-* [nvim-tree.lua](https://github.com/kyazdani42/nvim-tree.lua): I learned a lot from it in prototype stage.
+- [nerdtree](https://github.com/preservim/nerdtree): It's one of the greatest vim plugin.
+- [nvim-tree.lua](https://github.com/kyazdani42/nvim-tree.lua): I learned a lot from it in prototype stage.

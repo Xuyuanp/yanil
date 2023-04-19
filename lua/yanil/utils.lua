@@ -7,8 +7,6 @@ local validate = vim.validate
 local M = {
     path_sep = loop.os_uname().sysname == 'Windows' and '\\' or '/',
     ns_id = api.nvim_create_namespace('Yanil'),
-
-    callbacks = {},
 }
 
 function M.new_stack()
@@ -86,56 +84,16 @@ function M.is_binary(path)
     return output:find('x-empty') == nil and output:find('binary') ~= nil
 end
 
-function M.callback(key, ...)
-    if not M.callbacks[key] then
-        return
-    end
-    M.callbacks[key](...)
-end
-
-function M.register_callback(key, callback)
-    validate({
-        key = { key, 's' },
-        callback = { callback, 'f' },
-    })
-    M.callbacks[key] = callback
-end
-
-function M.buf_set_keymap(bufnr, mode, key, callback, opts)
-    opts = vim.tbl_extend('force', {
-        silent = false,
-        noremap = false,
-        nowait = true,
-    }, opts or {})
-
-    local cb_key = string.format('keymap-%s-%s', mode, key:gsub('<', ''):gsub('>', ''))
-
-    M.register_callback(cb_key, callback)
-    api.nvim_buf_set_keymap(bufnr, mode, key, string.format([[<cmd>lua require("yanil/utils").callback("%s")<CR>]], cb_key), opts)
-end
-
-function M.set_autocmds(group, autocmds)
-    api.nvim_command('augroup ' .. group)
-    api.nvim_command('autocmd!')
+function M.set_autocmds(group_name, autocmds)
+    local group = api.nvim_create_augroup(group_name, { clear = true })
 
     for _, autocmd in ipairs(autocmds or {}) do
-        local pattern = autocmd.pattern or 'Yanil'
-        local cb_key = string.format('%s_%s_%s', group, autocmd.event, pattern)
-        M.register_callback(cb_key, autocmd.cmd)
-
-        local t = { 'autocmd', autocmd.event, pattern }
-        if autocmd.once then
-            table.insert(t, '++once')
-        end
-        if autocmd.nested then
-            table.insert(t, '++nested')
-        end
-        table.insert(t, string.format([[lua require("yanil/utils").callback("%s")]], cb_key))
-
-        api.nvim_command(table.concat(t, ' '))
+        api.nvim_create_autocmd(autocmd.event, {
+            pattern = autocmd.pattern or 'Yanil',
+            callback = autocmd.cmd,
+            group = group,
+        })
     end
-
-    api.nvim_command('augroup end')
 end
 
 function M.table_equal(t1, t2)

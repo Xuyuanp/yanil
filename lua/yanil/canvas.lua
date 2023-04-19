@@ -105,7 +105,7 @@ local function create_buf(name)
     if name then
         api.nvim_buf_set_name(bufnr, name)
     end
-    for k, v in ipairs(buffer_options) do
+    for k, v in pairs(buffer_options) do
         api.nvim_buf_set_option(bufnr, k, v)
     end
     return bufnr
@@ -132,8 +132,12 @@ end
 
 function M.set_keymaps()
     for key, section_names in pairs(M.keys) do
-        utils.buf_set_keymap(M.bufnr, 'n', key, function()
+        vim.keymap.set('n', key, function()
             local linenr = M.get_current_linenr()
+            if not linenr then
+                return
+            end
+
             local section, relative_linenr = M.get_section_on_linenr(linenr)
             if not section or not vim.tbl_contains(section_names, section.name) then
                 return
@@ -143,7 +147,7 @@ function M.set_keymaps()
             M.in_edit_mode(function()
                 M.apply_changes(linenr, changes)
             end)
-        end)
+        end, { buffer = M.bufnr })
     end
 end
 
