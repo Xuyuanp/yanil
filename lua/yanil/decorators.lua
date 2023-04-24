@@ -121,7 +121,7 @@ function M.pretty_indent_with_git(node)
     return text, hls
 end
 
--- for debuging
+-- for debugging
 function M.random(_)
     return string.format('%d ', math.random(9))
 end

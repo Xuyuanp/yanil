@@ -32,7 +32,10 @@ local M = {}
 function M.setup()
     for section, links in pairs(default_highlight) do
         for k, v in pairs(links) do
-            api.nvim_command(string.format('hi default link Yanil%s%s %s', section, k, v))
+            api.nvim_set_hl(0, string.format('Yanil%s%s', section, k), {
+                link = v,
+                default = true,
+            })
         end
     end
 end

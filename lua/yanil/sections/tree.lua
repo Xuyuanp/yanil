@@ -175,7 +175,10 @@ function M:open_file_node(node, cmd)
     end
 
     if node:is_binary() then
-        local input = vim.fn.input(string.format('Yanil Warning:\n\n%s is a binary file.\nStill open? (yes/No): ', node.abs_path), 'No')
+        local input = vim.fn.input({
+            prompt = string.format('Warning: %s is a binary file. Still open? (yes/No): ', node.name),
+            default = 'No',
+        })
         if input:lower() ~= 'yes' then
             return
         end

@@ -4,8 +4,10 @@ local loop = vim.loop
 
 local validate = vim.validate
 
+local iswin = vim.loop.os_uname().sysname == 'Windows_NT'
+
 local M = {
-    path_sep = loop.os_uname().sysname == 'Windows' and '\\' or '/',
+    path_sep = iswin and '\\' or '/',
     ns_id = api.nvim_create_namespace('Yanil'),
 }
 

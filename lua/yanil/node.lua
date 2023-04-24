@@ -1,5 +1,4 @@
 local vim = vim
-local api = vim.api
 local validate = vim.validate
 local loop = vim.loop
 
@@ -138,17 +137,9 @@ function DirNode:load(force)
         return
     end
 
-    local handle, err = loop.fs_scandir(self.abs_path)
-    if not handle then
-        api.nvim_err_writeln(string.format('scandir %s failed: %s', self.abs_path, err))
-        return
-    end
-
     self.entries = {}
 
-    for name, ft in function()
-        return loop.fs_scandir_next(handle)
-    end do
+    for name, ft in vim.fs.dir(self.abs_path) do
         if not self:check_ignore(name) then
             local class = classes[ft] or FileNode
 
