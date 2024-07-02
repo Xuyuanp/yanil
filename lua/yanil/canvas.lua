@@ -106,7 +106,7 @@ local function create_buf(name)
         api.nvim_buf_set_name(bufnr, name)
     end
     for k, v in pairs(buffer_options) do
-        api.nvim_buf_set_option(bufnr, k, v)
+        api.nvim_set_option_value(k, v, { buf = bufnr })
     end
     return bufnr
 end
@@ -226,9 +226,9 @@ function M.apply_changes(linenr, changes)
     if not changes then
         return
     end
-    local bufnr = M.bufnr
+    local bufnr = M.bufnr or 0
     local texts = changes.texts or {}
-    if not vim.tbl_islist(texts) then
+    if not vim.islist(texts) then
         texts = { texts }
     end
     for _, text in ipairs(texts) do
@@ -236,7 +236,7 @@ function M.apply_changes(linenr, changes)
     end
 
     local highlights = changes.highlights or {}
-    if not vim.tbl_islist(highlights) then
+    if not vim.islist(highlights) then
         highlights = { highlights }
     end
     for _, hl in ipairs(highlights) do
@@ -293,12 +293,12 @@ function M.in_edit_mode(fn)
     if not vim.api.nvim_buf_is_loaded(M.bufnr) then
         return
     end
-    api.nvim_buf_set_option(M.bufnr, 'modifiable', true)
+    api.nvim_set_option_value('modifiable', true, { buf = M.bufnr })
     local ok, err = pcall(fn)
     if not ok then
         api.nvim_err_writeln(err)
     end
-    api.nvim_buf_set_option(M.bufnr, 'modifiable', false)
+    api.nvim_set_option_value('modifiable', false, { buf = M.bufnr })
 end
 
 function M.register_hook(name, fn)
