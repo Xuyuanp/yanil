@@ -1,6 +1,6 @@
 local vim = vim
 local validate = vim.validate
-local loop = vim.loop
+local loop = vim.uv
 
 local utils = require('yanil/utils')
 local path_sep = utils.path_sep
@@ -143,18 +143,14 @@ function DirNode:load(force)
         if not self:check_ignore(name) then
             local class = classes[ft] or FileNode
 
-            local abs_path = self.abs_path
-            if not endswith(abs_path, path_sep) then
-                abs_path = abs_path .. path_sep
-            end
-            abs_path = abs_path .. name
+            local abs_path = vim.fs.joinpath(self.abs_path, name)
 
             local realpath = nil
             if ft == 'link' then
                 realpath = loop.fs_realpath(abs_path)
                 if realpath then
                     local stat = loop.fs_stat(realpath)
-                    if stat.type == 'directory' then
+                    if stat and stat.type == 'directory' then
                         class = LinkDirNode
                     end
                 end
@@ -317,7 +313,7 @@ function Node:draw(opts, lines, highlights)
         if text then
             table.insert(symbols, text)
             hls = hls or {}
-            if not vim.tbl_islist(hls) then
+            if not vim.islist(hls) then
                 hls = { hls }
             end
             for _, hl in ipairs(hls) do
