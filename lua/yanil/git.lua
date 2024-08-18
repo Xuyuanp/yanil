@@ -1,6 +1,6 @@
 local vim = vim
 local api = vim.api
-local loop = vim.loop
+local loop = vim.uv
 
 local utils = require('yanil/utils')
 
@@ -102,15 +102,15 @@ function M.update(cwd)
 
     local git_root
 
-    local status_callback = vim.schedule_wrap(function(code, _signal, stdout, stderr)
-        if code > 0 then
-            api.nvim_err_writeln(string.format('git status failed: %s', stderr))
+    local status_callback = vim.schedule_wrap(function(res)
+        if res.code > 0 then
+            api.nvim_err_writeln(string.format('git status failed: %s', res.stderr))
             return
         end
 
         local state = {}
 
-        stdout = stdout or ''
+        local stdout = res.stdout or ''
         local lines = vim.split(stdout, delimiter)
         local is_rename = false
         for _, line in ipairs(lines) do
@@ -153,30 +153,20 @@ function M.update(cwd)
         end
     end)
 
-    local function root_callback(code, _signal, stdout, _stderr)
-        if code > 0 then
+    ---@param res vim.SystemCompleted
+    local function root_callback(res)
+        if res.code > 0 then
             return
         end
 
-        git_root = vim.trim(stdout) .. '/'
+        git_root = vim.trim(res.stdout) .. '/'
 
-        utils.spawn('git', {
-            args = {
-                'status',
-                '--porcelain=v2',
-                '-z',
-            },
+        vim.system({ 'git', 'status', '--porcelain=v2', '-z' }, {
             cwd = git_root,
         }, status_callback)
     end
 
-    utils.spawn('git', {
-        args = {
-            'rev-parse',
-            '--show-toplevel',
-        },
-        cwd = cwd,
-    }, root_callback)
+    vim.system({ 'git', 'rev-parse', '--show-toplevel' }, { cwd = cwd }, root_callback)
 end
 
 function M.get_icon_and_hl(path)
@@ -211,15 +201,15 @@ end
 
 function M.apply_buf(bufnr)
     bufnr = bufnr or 0
-    local patch = api.nvim_buf_get_lines(bufnr, 0, -1, false)
-    if not patch or #patch == 0 or (#patch == 1 and patch[1] == '') then
+    local lines = api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    if not lines or #lines == 0 or (#lines == 1 and lines[1] == '') then
         vim.fn.execute('q')
         return
     end
-    if patch[-1] ~= ' ' then
-        table.insert(patch, ' ')
+    if lines[-1] ~= ' ' then
+        table.insert(lines, ' ')
     end
-    patch = table.concat(patch, '\n')
+    local patch = table.concat(lines, '\n')
     local output = vim.fn.system({ 'git', 'apply', '--cached' }, patch)
     if vim.v.shell_error > 0 then
         api.nvim_err_writeln(string.format('git apply failed: %s', output))
@@ -248,7 +238,7 @@ function M.jump(tree, linenr, step)
     local start, total = step, step * total_lines
     for i = start, total, step do
         local index = (i + linenr) % total_lines
-        local node = tree.root:get_node_by_index(index) -- TODO: optimaze
+        local node = tree.root:get_node_by_index(index)
         if node.parent and M.get_icon_and_hl(node.abs_path) then
             tree:go_to_node(node)
             return
@@ -256,10 +246,12 @@ function M.jump(tree, linenr, step)
     end
 end
 
+---@diagnostic disable-next-line: unused-local
 function M.jump_next(tree, _node, _key, linenr)
     M.jump(tree, linenr, 1)
 end
 
+---@diagnostic disable-next-line: unused-local
 function M.jump_prev(tree, _node, _key, linenr)
     M.jump(tree, linenr, -1)
 end

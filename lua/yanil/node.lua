@@ -40,6 +40,7 @@ end
 
 do
     for _, ft in ipairs(filetypes) do
+        ---@diagnostic disable-next-line: assign-type-mismatch
         Node['is_' .. ft] = function(n)
             return n.ntype == ft
         end
@@ -85,6 +86,7 @@ local classes = {
 
 function DirNode:init()
     local stat = loop.fs_stat(self.abs_path)
+    assert(stat)
     self.last_modified = stat.mtime.sec
     self.entries = {}
 
@@ -115,6 +117,7 @@ function LinkNode:init()
 
     if self.link_to then
         local stat = loop.fs_stat(self.link_to)
+        assert(stat)
         self.link_to_type = stat.type
     end
 end

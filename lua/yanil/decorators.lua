@@ -59,6 +59,7 @@ function M.readonly(node)
     return ' '
 end
 
+---@diagnostic disable-next-line: unused-local
 function M.space(_node)
     return ' '
 end

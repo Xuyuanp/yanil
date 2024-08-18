@@ -961,6 +961,7 @@ function M.setup_highlight()
     end
 end
 
+---@diagnostic disable-next-line: unused-local
 function M.setup(_opts)
     M.setup_highlight()
     api.nvim_command('augroup yanil_devicons_highlight')

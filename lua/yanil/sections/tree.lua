@@ -1,6 +1,6 @@
 local vim = vim
 local api = vim.api
-local loop = vim.loop
+local uv = vim.uv
 
 local Section = require('yanil/section')
 local nodelib = require('yanil/node')
@@ -35,7 +35,7 @@ function M:setup(opts)
 end
 
 function M:set_cwd(cwd)
-    cwd = cwd or loop.cwd()
+    cwd = cwd or uv.cwd()
     if not vim.endswith(cwd, utils.path_sep) then
         cwd = cwd .. utils.path_sep
     end

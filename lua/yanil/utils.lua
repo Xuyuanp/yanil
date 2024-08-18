@@ -1,6 +1,5 @@
 local vim = vim
 local api = vim.api
-local loop = vim.loop
 
 local validate = vim.validate
 
@@ -36,42 +35,6 @@ function M.new_stack()
     end
 
     return stack
-end
-
-function M.spawn(path, options, callback)
-    local stdout = loop.new_pipe(false)
-    local stderr = loop.new_pipe(false)
-
-    local stdout_chunk, stderr_chunk
-
-    local handle
-    handle = loop.spawn(
-        path,
-        vim.tbl_deep_extend('keep', options, {
-            stdio = { nil, stdout, stderr },
-        }),
-        function(code, signal)
-            pcall(callback, code, signal, stdout_chunk, stderr_chunk)
-            handle:close()
-            stdout:close()
-            stderr:close()
-        end
-    )
-
-    stdout:read_start(function(err, data)
-        assert(not err, err)
-        if not data then
-            return
-        end
-        stdout_chunk = (stdout_chunk or '') .. data
-    end)
-    stderr:read_start(function(err, data)
-        assert(not err, err)
-        if not data then
-            return
-        end
-        stderr_chunk = (stderr_chunk or '') .. data
-    end)
 end
 
 function M.is_binary(path)
