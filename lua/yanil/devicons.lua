@@ -102,7 +102,7 @@ local default_devicons = {
             ctermfg = '73',
             guifg = '#689FB6',
         },
-        icon = '',
+        icon = '󰌛',
     },
     csh = {
         hl = {
@@ -554,7 +554,7 @@ local default_devicons = {
         icon = '',
     },
     r = {
-        icon = 'ﳒ',
+        icon = '󰟔',
     },
     rake = {
         icon = '',
@@ -581,7 +581,7 @@ local default_devicons = {
         icon = '',
     },
     rproj = {
-        icon = '鉶',
+        icon = '󰗆',
     },
     rs = {
         hl = {
@@ -675,7 +675,7 @@ local default_devicons = {
         icon = '',
     },
     tex = {
-        icon = 'ﭨ',
+        icon = '󰙩',
     },
     toml = {
         hl = {
@@ -717,7 +717,7 @@ local default_devicons = {
             ctermfg = '36',
             guifg = '#42B883',
         },
-        icon = '﵂',
+        icon = '󰡄',
     },
     webmanifest = {
         icon = '',
@@ -803,19 +803,19 @@ local default_devicons = {
         hl = {
             guifg = '#146C32',
         },
-        icon = '',
+        icon = '󰈛',
     },
     word = {
         hl = {
             guifg = '#025CB9',
         },
-        icon = '',
+        icon = '󰈬',
     },
     ppt = {
         hl = {
             guifg = '#B62B16',
         },
-        icon = '',
+        icon = '󰈧',
     },
     txt = {
         hl = {
@@ -994,7 +994,7 @@ end
 function M.decorator()
     return function(node)
         if not node.parent then
-            local text = 'פּ'
+            local text = '󰙅'
             return text, 'YanilTreeDirectory'
         end
         if node:is_dir() then
