@@ -3,7 +3,7 @@ local api = vim.api
 
 local validate = vim.validate
 
-local iswin = vim.loop.os_uname().sysname == 'Windows_NT'
+local iswin = vim.uv.os_uname().sysname == 'Windows_NT'
 
 local M = {
     path_sep = iswin and '\\' or '/',
@@ -42,7 +42,7 @@ function M.is_binary(path)
 
     local output = vim.fn.system('file -binLN ' .. path)
     if vim.v.shell_error > 0 then
-        api.nvim_err_writeln(string.format('check file %s mime encoding failed: %s', path, output))
+        vim.notify(string.format('check file %s mime encoding failed: %s', path, output), vim.log.levels.ERROR)
         return
     end
 
@@ -63,8 +63,8 @@ end
 
 function M.table_equal(t1, t2)
     validate({
-        t1 = { t1, 't' },
-        t2 = { t2, 't' },
+        t1 = { t1, 'table' },
+        t2 = { t2, 'table' },
     })
     if vim.tbl_count(t1) ~= vim.tbl_count(t2) then
         return false

@@ -2,7 +2,7 @@ local vim = vim
 local api = vim.api
 local loop = vim.uv
 
-local utils = require('yanil/utils')
+local utils = require('yanil.utils')
 
 local default_options = {
     icons = {
@@ -36,11 +36,15 @@ function M.setup(opts)
     M.options.icons = vim.tbl_deep_extend('keep', opts.icons or {}, default_options.icons)
     M.options.highlights = vim.tbl_deep_extend('keep', opts.highlights or {}, default_options.highlights)
 
-    api.nvim_command('augroup yanil_git')
-    api.nvim_command('autocmd!')
-    api.nvim_command([[autocmd BufWritePost * if empty(&buftype) | call luaeval('require("yanil/git").update()') | endif]])
-    api.nvim_command("autocmd User FugitiveChanged lua require('yanil/git').update()")
-    api.nvim_command('augroup end')
+    local group_id = vim.api.nvim_create_augroup('yanil/git', { clear = true })
+    vim.api.nvim_create_autocmd('BufWritePost', {
+        group = group_id,
+        pattern = '*',
+        desc = '[Yanil] update on save',
+        callback = function()
+            require('yanil.git').update()
+        end,
+    })
 end
 
 local delimiter = string.char(0)
@@ -104,7 +108,7 @@ function M.update(cwd)
 
     local status_callback = vim.schedule_wrap(function(res)
         if res.code > 0 then
-            api.nvim_err_writeln(string.format('git status failed: %s', res.stderr))
+            vim.notify(string.format('git status failed: %s', res.stderr), vim.log.levels.ERROR)
             return
         end
 
@@ -148,7 +152,7 @@ function M.update(cwd)
             M.prev_state = M.state
             M.state = state
             if vim.fn.exists('#User#YanilGitStatusChanged') then
-                api.nvim_command('doautocmd User YanilGitStatusChanged')
+                api.nvim_exec_autocmds('User', { pattern = 'YanilGitStatusChanged' })
             end
         end
     end)
@@ -210,19 +214,16 @@ function M.apply_buf(bufnr)
         table.insert(lines, ' ')
     end
     local patch = table.concat(lines, '\n')
-    local output = vim.fn.system({ 'git', 'apply', '--cached' }, patch)
-    if vim.v.shell_error > 0 then
-        api.nvim_err_writeln(string.format('git apply failed: %s', output))
-        return
+    local res = vim.system({ 'git', 'apply', '--cache' }, {
+        stdin = patch,
+    }):wait()
+    if res.code ~= 0 then
+        vim.notify(string.format('git apply failed: %s', res.stderr or res.stdout or 'unknown'), vim.log.levels.ERROR)
     end
 
     vim.fn.execute('q')
 
-    if vim.g.loaded_fugitive then
-        api.nvim_command('doautocmd User FugitiveChanged')
-    else
-        M.update()
-    end
+    M.update()
 end
 
 function M.refresh_tree(tree)

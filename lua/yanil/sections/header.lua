@@ -1,4 +1,4 @@
-local Section = require('yanil/section')
+local Section = require('yanil.section')
 
 local M = Section:new({
     name = 'Header',

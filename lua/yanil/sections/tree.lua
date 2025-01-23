@@ -2,10 +2,10 @@ local vim = vim
 local api = vim.api
 local uv = vim.uv
 
-local Section = require('yanil/section')
-local nodelib = require('yanil/node')
+local Section = require('yanil.section')
+local nodelib = require('yanil.node')
 
-local utils = require('yanil/utils')
+local utils = require('yanil.utils')
 
 local M = Section:new({
     name = 'Tree',
@@ -183,8 +183,8 @@ function M:open_file_node(node, cmd)
             return
         end
     end
-    api.nvim_command('wincmd p')
-    api.nvim_command(cmd .. ' ' .. node.abs_path)
+    vim.cmd('wincmd p')
+    vim.cmd(cmd .. ' ' .. node.abs_path)
 end
 
 function M:gen_open_file_node(cmd)

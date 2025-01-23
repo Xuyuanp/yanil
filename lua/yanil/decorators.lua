@@ -101,7 +101,7 @@ function M.pretty_indent_with_git(node)
         hl_group = hl,
     } }
 
-    local git = require('yanil/git')
+    local git = require('yanil.git')
     local git_icon, git_hl = git.get_icon_and_hl(node.abs_path)
     if git_icon then
         local suffix_len = vim.endswith(text, '╴ ') and 4 or 2

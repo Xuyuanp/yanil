@@ -1,7 +1,7 @@
 local vim = vim
 local api = vim.api
 
-local utils = require('yanil/utils')
+local utils = require('yanil.utils')
 
 local validate = vim.validate
 
@@ -296,15 +296,15 @@ function M.in_edit_mode(fn)
     api.nvim_set_option_value('modifiable', true, { buf = M.bufnr })
     local ok, err = pcall(fn)
     if not ok then
-        api.nvim_err_writeln(err)
+        vim.notify(string.format('%s', err), vim.log.levels.ERROR)
     end
     api.nvim_set_option_value('modifiable', false, { buf = M.bufnr })
 end
 
 function M.register_hook(name, fn)
     validate({
-        name = { name, 's' },
-        fn = { fn, 'f' },
+        name = { name, 'string' },
+        fn = { fn, 'function' },
     })
     local fns = M.hooks[name] or {}
     table.insert(fns, fn)

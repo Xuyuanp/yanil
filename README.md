@@ -8,7 +8,7 @@ This not an out-of-box nerdtree alternative (and won't be), but a lib to build y
 
 ## Prerequisites
 
-- `neovim-0.8.0` or higher.
+- `neovim-0.11.0` or higher.
 
 ## Installation
 

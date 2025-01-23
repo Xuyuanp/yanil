@@ -2,7 +2,7 @@ local vim = vim
 local validate = vim.validate
 local loop = vim.uv
 
-local utils = require('yanil/utils')
+local utils = require('yanil.utils')
 local path_sep = utils.path_sep
 
 local startswith = vim.startswith
@@ -301,9 +301,9 @@ end
 
 function Node:draw(opts, lines, highlights)
     validate({
-        opts = { opts, 't', false },
-        lines = { lines, 't', true },
-        highlights = { highlights, 't', true },
+        opts = { opts, 'table', false },
+        lines = { lines, 'table', true },
+        highlights = { highlights, 'table', true },
     })
     lines = lines or {}
     highlights = highlights or {}

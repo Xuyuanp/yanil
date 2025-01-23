@@ -941,16 +941,15 @@ local extension_aliases = {
 -- }
 
 local vim = vim
-local api = vim.api
 
 local M = {}
 
-local function highlight_define(ft, ctermfg, guifg)
-    ctermfg = ctermfg or 'NONE'
+local function highlight_define(ft, _, guifg)
     guifg = guifg or 'NONE'
     local name = string.format('YanilDevicons_%s', ft)
-    local cmd = string.format('silent hi %s ctermfg=%s guifg=%s', name, ctermfg, guifg)
-    api.nvim_command(cmd)
+    vim.api.nvim_set_hl(0, name, {
+        fg = guifg,
+    })
 end
 
 function M.setup_highlight()
@@ -964,10 +963,6 @@ end
 ---@diagnostic disable-next-line: unused-local
 function M.setup(_opts)
     M.setup_highlight()
-    api.nvim_command('augroup yanil_devicons_highlight')
-    api.nvim_command('autocmd!')
-    api.nvim_command("autocmd ColorScheme * lua require('yanil/devicons').setup_highlight()")
-    api.nvim_command('augroup end')
 end
 
 local function check_specials(name)

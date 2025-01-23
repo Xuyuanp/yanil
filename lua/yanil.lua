@@ -1,9 +1,8 @@
-local git = require('yanil/git')
-local devicons = require('yanil/devicons')
+local git = require('yanil.git')
+local devicons = require('yanil.devicons')
 
 local config = {
-    colors = require('yanil/colors'),
-    commands = require('yanil/commands'),
+    colors = require('yanil.colors'),
 }
 
 local M = {}
@@ -11,7 +10,6 @@ local M = {}
 function M.setup(opts)
     opts = opts or {}
     config.colors.setup()
-    config.commands.setup()
     git.setup(opts.git)
     devicons.setup(opts.devicons)
 end
