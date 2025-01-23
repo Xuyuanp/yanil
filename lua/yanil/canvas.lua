@@ -112,13 +112,13 @@ local function create_buf(name)
 end
 
 local function create_win(bufnr)
-    api.nvim_command('noautocmd topleft vertical 30 new')
-    api.nvim_command('noautocmd setlocal bufhidden=wipe')
+    vim.cmd('topleft vertical 30 new')
+    vim.cmd('setlocal bufhidden=wipe')
 
     api.nvim_win_set_buf(0, bufnr)
 
     for _, win_opt in ipairs(win_options) do
-        api.nvim_command('noautocmd setlocal ' .. win_opt)
+        vim.cmd('setlocal ' .. win_opt)
     end
 end
 
