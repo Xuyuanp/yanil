@@ -10,32 +10,35 @@ local M = {
     ns_id = api.nvim_create_namespace('Yanil'),
 }
 
-function M.new_stack()
-    local head = { next = nil }
+---@class yani.Stack
+---@field private head? table
+local Stack = {}
+Stack.__index = Stack
 
-    local stack = {}
-
-    function stack:is_empty()
-        return head.next == nil
-    end
-
-    function stack:push(item)
-        local o = { next = head.next, value = item }
-        head.next = o
-    end
-
-    function stack:pop()
-        if stack:is_empty() then
-            return
-        end
-
-        local item = head.next.value
-        head.next = head.next.next
-        return item
-    end
-
-    return stack
+---@return yani.Stack
+function Stack.new()
+    return setmetatable({}, Stack)
 end
+
+function Stack:is_empty()
+    return self.head == nil
+end
+
+function Stack:push(item)
+    self.head = { next = self.head, value = item }
+end
+
+function Stack:pop()
+    if self:is_empty() then
+        return
+    end
+
+    local item = self.head.value
+    self.head = self.head.next
+    return item
+end
+
+M.Stack = Stack
 
 function M.is_binary(path)
     validate({ path = { path, 'string' } })

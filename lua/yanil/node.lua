@@ -1,8 +1,9 @@
 local vim = vim
 local validate = vim.validate
-local loop = vim.uv
+local uv = vim.uv
 
 local utils = require('yanil.utils')
+local Stack = utils.Stack
 local path_sep = utils.path_sep
 
 local startswith = vim.startswith
@@ -18,6 +19,9 @@ local filetypes = {
     'unknown',
 }
 
+---@class yanil.Node
+---@field ntype? string
+---@field parent? yanil.DirNode
 local Node = {
     name = '',
     abs_path = '',
@@ -48,13 +52,18 @@ do
 end
 
 function Node:is_dir()
-    return self:is_directory()
+    return false
 end
 
 function Node:is_hidden()
     return startswith(self.name, '.')
 end
 
+---@class yanil.DirNode: yanil.Node
+---@field is_open boolean
+---@field is_loaded boolean
+---@field last_modified number
+---@field filters? function[]
 local DirNode = Node:new({
     ntype = 'directory',
     is_open = false,
@@ -62,17 +71,22 @@ local DirNode = Node:new({
     last_modified = 0,
 })
 
+---@class yanil.FileNode: yanil.Node
 local FileNode = Node:new({
     ntype = 'file',
     is_exec = false,
     extension = nil,
 })
 
+---@class yanil.LinkNode: yanil.FileNode
+---@field link_to? string
 local LinkNode = FileNode:new({
     ntype = 'link',
     link_to = nil,
 })
 
+---@class yanil.LinkDirNode: yanil.DirNode
+---@field link_to? string
 local LinkDirNode = DirNode:new({
     ntype = 'link',
     link_to = nil,
@@ -85,7 +99,7 @@ local classes = {
 }
 
 function DirNode:init()
-    local stat = loop.fs_stat(self.abs_path)
+    local stat = uv.fs_stat(self.abs_path)
     assert(stat)
     self.last_modified = stat.mtime.sec
     self.entries = {}
@@ -98,9 +112,13 @@ function DirNode:init()
     end
 end
 
+function DirNode:is_dir()
+    return true
+end
+
 function FileNode:init()
-    self.is_exec = loop.fs_access(self.abs_path, 'X')
-    self.is_readonly = not loop.fs_access(self.abs_path, 'W')
+    self.is_exec = uv.fs_access(self.abs_path, 'X')
+    self.is_readonly = not uv.fs_access(self.abs_path, 'W')
     self.extension = vim.fn.fnamemodify(self.abs_path, ':e') or ''
 end
 
@@ -116,7 +134,7 @@ function LinkNode:init()
     FileNode.init(self)
 
     if self.link_to then
-        local stat = loop.fs_stat(self.link_to)
+        local stat = uv.fs_stat(self.link_to)
         assert(stat)
         self.link_to_type = stat.type
     end
@@ -131,7 +149,7 @@ function LinkDirNode:init()
     self.link_to_type = 'directory'
 end
 
-function LinkDirNode:is_directory()
+function LinkDirNode:is_dir()
     return true
 end
 
@@ -150,9 +168,9 @@ function DirNode:load(force)
 
             local realpath = nil
             if ft == 'link' then
-                realpath = loop.fs_realpath(abs_path)
+                realpath = uv.fs_realpath(abs_path)
                 if realpath then
-                    local stat = loop.fs_stat(realpath)
+                    local stat = uv.fs_stat(realpath)
                     if stat and stat.type == 'directory' then
                         class = LinkDirNode
                     end
@@ -213,7 +231,7 @@ function DirNode:iter(loaded)
     validate({
         loaded = { loaded, 'boolean', true },
     })
-    local stack = utils.new_stack()
+    local stack = Stack.new()
     stack:push(self)
     local index = -1
     return function()

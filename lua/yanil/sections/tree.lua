@@ -1,5 +1,4 @@
 local vim = vim
-local api = vim.api
 local uv = vim.uv
 
 local Section = require('yanil.section')
@@ -7,6 +6,7 @@ local nodelib = require('yanil.node')
 
 local utils = require('yanil.utils')
 
+---@class yanil.secions.Tree
 local M = Section:new({
     name = 'Tree',
 })
@@ -312,13 +312,15 @@ function M:go_to_first_child(node)
 end
 
 ---Generate go_to_sibling function
----@param n number
+---@param n integer
 function M:gen_go_to_sibling(n)
     return function(_, node)
         return self:go_to_sibling(node, n)
     end
 end
 
+---@param node yanil.Node
+---@param n integer
 function M:go_to_sibling(node, n)
     local sibling = node:find_sibling(n)
     if not sibling then
