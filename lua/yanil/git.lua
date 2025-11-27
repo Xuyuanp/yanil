@@ -165,7 +165,7 @@ function M.update(cwd)
 
         git_root = vim.trim(res.stdout) .. '/'
 
-        vim.system({ 'git', 'status', '--porcelain=v2', '-z' }, {
+        vim.system({ 'git', 'status', '--porcelain=v2', '-z', '--untracked-files' }, {
             cwd = git_root,
         }, status_callback)
     end
