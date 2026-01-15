@@ -29,6 +29,7 @@ local win_options = {
     'norelativenumber',
     'nonumber',
     'nolist',
+    'nowrap',
     'nobuflisted',
     'winfixwidth',
     'winfixheight',
